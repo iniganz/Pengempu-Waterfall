@@ -1,0 +1,203 @@
+.bi {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+}
+
+body {
+    background-color: transparent;
+    /* background-image: url('/images/bg5.jpg'); */
+    background-size: cover;
+}
+/*
+ * Sidebar
+ */
+
+@media (min-width: 768px) {
+  .sidebar .offcanvas-lg {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 48px;
+  }
+  .navbar-search {
+    display: block;
+  }
+}
+
+.sidebar .nav-link {
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+.sidebar .nav-link.active {
+  color: #000000;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+}
+.sidebar {
+  border: none !important;
+}
+
+.sidebar .nav-link {
+  color: black !important;
+  transition: 0.2s ease-in-out;
+}
+
+.sidebar .nav-link.text-success {
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+.offcanvas-body {
+  height: 100vh;
+  overflow-y: auto !important;
+}
+.sidebar,
+.offcanvas-md {
+  height: 100vh;
+}
+
+
+.detail-container {
+  background: rgba(255, 255, 255, 0.85); /* latar putih semi-transparan */
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: #000; /* pastikan teks jadi hitam */
+  backdrop-filter: blur(5px); /* blur latar belakang jika ingin efek kaca */
+}
+
+.detail-box {
+  background: rgba(0, 0, 0, 0.5); /* Warna gelap semi-transparan */
+  padding: 1.5rem;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Tambahan border halus */
+  color: #fff; /* Warna teks putih agar terlihat */
+}
+
+
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+}
+
+/*
+.platform-item {
+    border: 1px solid #ddd;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    transition: 0.2s;
+    margin: 4px;
+} */
+/*
+.platform-item:hover {
+    background-color: #e2e6ea;
+    border-color: #aaa;
+} */
+
+.produk-int, .produk-int * {
+  text-align: justify !important;
+}
+
+.border-neon {
+  border: 0.2rem solid #fff;
+  border-radius: 2rem;
+  padding: 0.4em;
+  box-shadow: 0 0 .2rem #fff,
+              0 0 .2rem #fff,
+              0 0 2rem #bc13fe,
+              0 0 0.8rem #bc13fe,
+              0 0 2.8rem #bc13fe,
+           inset 0 0 1.3rem #bc13fe;
+
+}
+
+.neonText {
+  animation: flicker 1.5s infinite alternate;
+  color: #fff;
+}
+@keyframes flicker {
+
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+
+      text-shadow:
+      0 0 4px #fff,
+      0 0 11px #fff,
+      0 0 19px #fff,
+      0 0 40px rgb(0, 0, 0),
+      0 0 80px rgb(0, 0, 0),
+      0 0 90px rgb(0, 0, 0),
+      0 0 100px rgb(0, 0, 0),
+      0 0 150px rgb(0, 0, 0);
+
+  }
+
+  20%, 24%, 55% {
+      text-shadow: none;
+  }
+}
+
+/* h1 {
+    color: white !important;
+
+}
+table thead tr {
+    color: white !important;
+} */
+
+
+
+.table-responsive {
+  background: rgba(0, 0, 0, 0.4); /* Lebih gelap dan terlihat lebih jelas */
+  padding: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(3px);
+}
+
+.table th,
+.table td {
+  color: #fff !important;
+}
+
+
+
+/* .table-responsive {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+} */
+
+
+
+@media screen and (max-width: 500px) {
+
+
+    .Maindiv h1 {
+    font-size: x-large;
+
+    }
+
+    .tablecontent tbody tr td a, button {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+}
+
+.pagination.pagination-sm .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+

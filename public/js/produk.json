@@ -1,0 +1,19 @@
+{
+    "products": {
+        "1": {
+            "title": "App 1",
+            "image": "../img/masonry-portfolio/pc1.jpg",
+            "description": "Deskripsi lengkap untuk App 1"
+        },
+        "2": {
+            "title": "App 2",
+            "image": "../img/masonry-portfolio/pc2.jpg",
+            "description": "Deskripsi lengkap untuk App 2"
+        },
+        "3": {
+            "title": "App 3",
+            "image": "../img/masonry-portfolio/pc3.jpg",
+            "description": "Deskripsi lengkap untuk App 3"
+        }
+    }
+}

@@ -1,0 +1,51 @@
+.service-detail-hero {
+    padding: 60px 0;
+    background-color: #f8f9fa;
+  }
+
+  .service-features ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .service-features li {
+    padding: 8px 0;
+  }
+
+  .service-features i {
+    color: #007bff;
+    margin-right: 10px;
+  }
+
+  .services-list a {
+    display: block;
+    padding: 8px 15px;
+    margin-bottom: 5px;
+    color: #333;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.3s;
+  }
+
+  .services-list a:hover,
+  .services-list a.active {
+    background-color: #f1f1f1;
+    border-left-color: #007bff;
+  }
+
+  .services-list i {
+    margin-right: 8px;
+  }
+
+  .help-box {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .help-icon {
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 15px;
+  }

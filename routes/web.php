@@ -41,6 +41,7 @@ Route::post('/contact/send', [KontakController::class, 'send'])->name('contact.s
 
 Route::get('/galery', [GalleryPostController::class, 'publicGallery'])->name('galery');
 Route::get('/product', [ProductController::class, 'show'])->name('product');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
 Route::get('/explore-sekitar', [ExploreController::class, 'index'])->name('explore-sekitar');
 Route::get('/explore-sekitar/{slug}', [ExploreController::class, 'show']);

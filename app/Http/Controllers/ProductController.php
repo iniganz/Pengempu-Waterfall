@@ -26,14 +26,9 @@ class ProductController extends Controller
     /**
      * Display product detail (Public) - Pengempu Waterfall
      */
-public function show($id = null)
+public function show($id)
 {
-    if ($id) {
-        $product = Product::with('images','category','platforms')->findOrFail($id);
-    } else {
-        $product = Product::where('published', true)->firstOrFail();
-    }
-
+    $product = Product::with('images', 'category', 'platforms')->findOrFail($id);
     return view('publik.page.product', compact('product'));
 }
 

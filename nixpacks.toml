@@ -9,8 +9,15 @@ cmds = [
 [phases.build]
 cmds = [
   "composer install --no-dev --optimize-autoloader",
+  "php artisan key:generate --force || true",
+  "php artisan migrate --force || true",
+  "php artisan storage:link || true",
+  "php artisan config:clear",
+  "php artisan cache:clear",
+  "php artisan config:cache",
   "npm run build"
 ]
+
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t public"

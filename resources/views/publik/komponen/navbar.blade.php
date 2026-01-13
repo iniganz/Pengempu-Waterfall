@@ -3,7 +3,7 @@
     class="relative z-30 flex h-[120px] w-full items-center justify-between bg-gradient-to-r from-green-900 to-green-500 px-6 shadow-lg transition-all md:px-16 lg:px-24 xl:px-32">
 
     <a href="{{ url('/') }}" class="flex-shrink-0">
-        <img src="{{ asset('images/pengempu.png') }}" alt="Pengempu Waterfall Logo" class="h-[100px] w-auto">
+        <img src="{{ asset('images/Pengempu.png') }}" alt="Pengempu Waterfall Logo" class="h-[100px] w-auto">
     </a>
 
     <ul class="hidden items-center gap-10 font-bold text-white md:flex">

@@ -3,7 +3,7 @@
     class="relative z-30 flex h-[120px] w-full items-center justify-between bg-gradient-to-r from-green-900 to-green-500 px-6 shadow-lg transition-all md:px-16 lg:px-24 xl:px-32">
 
     <a href="{{ url('/') }}" class="flex-shrink-0">
-        <img src="{{ asset('images/Pengempu.png') }}" alt="Pengempu Waterfall Logo" class="h-[100px] w-auto">
+        <img src="{{ asset('images/pengempu.png') }}" alt="Pengempu Waterfall Logo" class="h-[100px] w-auto">
     </a>
 
     <ul class="hidden items-center gap-10 font-bold text-white md:flex">
@@ -31,7 +31,7 @@
 
     <button type="button"
         class="hidden h-11 w-40 rounded-full bg-white text-sm font-semibold text-gray-700 transition-all hover:opacity-90 active:scale-95 md:inline">
-       <a href="{{ route('product.show', 1) }}">
+        <a href="{{ route('product') }}">
             Get Ticket
         </a>
     </button>
@@ -54,7 +54,7 @@
         </ul>
         <button type="button"
             class="mt-6 h-11 w-full rounded-full bg-white text-sm font-semibold text-gray-700 transition-all hover:opacity-90 active:scale-95">
-            <a href="{{ route('product.show', 1) }}">
+            <a href="{{ route('product') }}">
                 Get Ticket
             </a>
         </button>

@@ -26,12 +26,18 @@ class ProductController extends Controller
     /**
      * Display product detail (Public) - Pengempu Waterfall
      */
-public function show($id)
-{
-    $product = Product::with('images', 'category', 'platforms')->findOrFail($id);
-    return view('publik.page.product', compact('product'));
-}
+    public function show()
+    {
+        try {
+            $product = Product::with('images', 'category', 'platforms')
+                ->where('slug', 'pengempu-waterfall')
+                ->firstOrFail();
 
+            return view('publik.page.product', compact('product'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error loading product: ' . $e->getMessage());
+        }
+    }
 
 
 

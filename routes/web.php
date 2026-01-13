@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -33,7 +27,6 @@ Route::get('/storage-link', function () {
     return 'Storage link successfully';
 });
 
-
 Route::get('/', [PublikController::class, 'index'])->name('home');
 // Route::get('/explore-sekitar', [PublikController::class, 'explore-sekitar'])->name('explore-sekitar');
 Route::get('/contact', [PublikController::class, 'contact'])->name('contact');
@@ -41,8 +34,7 @@ Route::post('/contact/send', [KontakController::class, 'send'])->name('contact.s
 
 
 Route::get('/galery', [GalleryPostController::class, 'publicGallery'])->name('galery');
-Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/product', [ProductController::class, 'show'])->name('product');
 
 Route::get('/explore-sekitar', [ExploreController::class, 'index'])->name('explore-sekitar');
 Route::get('/explore-sekitar/{slug}', [ExploreController::class, 'show']);

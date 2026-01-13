@@ -33,6 +33,7 @@ Route::get('/storage-link', function () {
     return 'Storage link successfully';
 });
 
+
 Route::get('/', [PublikController::class, 'index'])->name('home');
 // Route::get('/explore-sekitar', [PublikController::class, 'explore-sekitar'])->name('explore-sekitar');
 Route::get('/contact', [PublikController::class, 'contact'])->name('contact');

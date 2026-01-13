@@ -7,13 +7,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\PublikController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\Admin\OrderAdminController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Admin\PlaceController;
 use App\Http\Controllers\GalleryPostController;
@@ -22,6 +26,12 @@ use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\Admin\PostAdminController;
 use App\Http\Controllers\Admin\GalleryAdminController;
 use App\Http\Controllers\Admin\TestimonialAdminController;
+
+
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link successfully';
+});
 
 Route::get('/', [PublikController::class, 'index'])->name('home');
 // Route::get('/explore-sekitar', [PublikController::class, 'explore-sekitar'])->name('explore-sekitar');
@@ -43,7 +53,20 @@ Route::get('/testimonial', function () {
 
 Route::get('/booking/{product}', [BookingController::class, 'index'])->name('booking.show');
 Route::post('/booking/{product}', [BookingController::class, 'store'])->name('booking.store');
+Route::post('/booking/{product}/snap-token', [BookingController::class, 'snapToken'])->name('booking.snap-token');
+Route::get('/booking/{product}/payment', [BookingController::class, 'payment'])->name('booking.payment');
+Route::get('/booking/{product}/finish', [BookingController::class, 'finish'])->name('booking.finish');
 
+
+Route::post('/midtrans/webhook', [MidtransController::class, 'handle']);
+
+// Public route - untuk pengunjung scan QR
+Route::get('/ticket/verify/{token}', [TicketController::class, 'verify'])
+    ->name('ticket.verify');
+
+// Protected route - untuk pengelola validate ticket
+Route::middleware('auth')->get('/ticket/validate/{token}', [TicketController::class, 'validate'])
+    ->name('ticket.validate');
 
 
 
@@ -57,6 +80,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Ticket Scanning - untuk pengelola
+    Route::get('/ticket/scan', function() {
+        return view('publik.ticket.scan-dashboard');
+    })->name('ticket.scan');
 
     // Post Pengunjung Routes
     Route::get('/dashboard/post', [GalleryPostController::class, 'adminIndex'])
@@ -90,6 +117,14 @@ Route::middleware('auth')->group(function () {
 
     // Place Management Resource Route
     Route::resource('places', PlaceController::class)->names('dashboard.places');
+
+    // Orders monitor
+    Route::get('/dashboard/orders', [OrderAdminController::class, 'index'])
+        ->name('dashboard.orders.index');
+    Route::get('/dashboard/orders/{order}', [OrderAdminController::class, 'show'])
+        ->name('dashboard.orders.show');
+    Route::delete('/dashboard/orders/{order}', [OrderAdminController::class, 'destroy'])
+        ->name('dashboard.orders.destroy');
 });
 
 

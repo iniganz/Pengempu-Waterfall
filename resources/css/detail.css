@@ -1,40 +1,139 @@
 .product-detail {
-    padding-top: 100px ;
-    /* margin-top: 100px; */
+    padding-top: 100px;
+}
+
+@media (max-width: 768px) {
+    .product-detail {
+        padding-top: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-detail {
+        padding-top: 60px;
+    }
 }
 
 .text-muted {
     color: #ff0000 !important;
 }
+
 .product-detail-hero {
     padding: 60px 0;
     background-color: #f8f9fa;
-  }
-  .product-gallery {
-    margin-bottom: 30px;
-  }
-  .product-thumbnails {
-    margin-top: 15px;
+}
 
-  }
-  .product-thumbnails img {
+@media (max-width: 768px) {
+    .product-detail-hero {
+        padding: 40px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-detail-hero {
+        padding: 30px 0;
+    }
+}
+
+.product-gallery {
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .product-gallery {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-gallery {
+        margin-bottom: 15px;
+    }
+}
+
+.product-thumbnails {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .product-thumbnails {
+        margin-top: 10px;
+    }
+}
+
+.product-thumbnails img {
     width: 80px;
     height: 80px;
     object-fit: cover;
     margin-right: 10px;
     cursor: pointer;
     border: 2px solid transparent;
+}
 
-  }
-  .product-thumbnails img.active {
+@media (max-width: 768px) {
+    .product-thumbnails img {
+        width: 60px;
+        height: 60px;
+        margin-right: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-thumbnails img {
+        width: 50px;
+        height: 50px;
+        margin-right: 6px;
+    }
+}
+
+.product-thumbnails img.active {
     border-color: #007bff;
-  }
-  .product-info {
+}
+
+.product-info {
     padding: 20px;
-  }
-  .product-features {
+}
+
+@media (max-width: 768px) {
+    .product-info {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-info {
+        padding: 10px;
+    }
+}
+
+.product-features {
     margin: 40px 0;
-  }
-  .back-button {
+}
+
+@media (max-width: 768px) {
+    .product-features {
+        margin: 25px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-features {
+        margin: 15px 0;
+    }
+}
+
+.back-button {
     margin-bottom: 30px;
-  }
+}
+
+@media (max-width: 768px) {
+    .back-button {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .back-button {
+        margin-bottom: 15px;
+    }
+}

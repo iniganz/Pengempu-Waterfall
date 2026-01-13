@@ -98,8 +98,8 @@
                         </div>
 
                         <!-- Mobile View: Horizontal Scroll -->
-                        <div class="overflow-x-auto pb-4 md:hidden">
-                            <div class="flex gap-4" style="min-width: min-content;">
+                        <div class="overflow-x-auto pb-4 md:hidden gallery-scroll-container">
+                            <div class="flex gap-4" style="min-width: min-content; -webkit-overflow-scrolling: touch;">
                                 @foreach ($product->images as $index => $image)
                                     <div class="group relative flex-shrink-0 overflow-hidden rounded-lg bg-gray-200"
                                         style="width: 200px; height: 200px;">
@@ -164,4 +164,31 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .gallery-scroll-container {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f3f4f6;
+        }
+
+        .gallery-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .gallery-scroll-container::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        .gallery-scroll-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 10px;
+        }
+
+        .gallery-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+        }
+    </style>
 </x-app-layout>

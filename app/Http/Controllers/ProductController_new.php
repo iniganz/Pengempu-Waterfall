@@ -27,13 +27,5 @@ class ProductController_new extends Controller
     /**
      * Display all products (Public - for gallery page)
      */
-    public function index()
-    {
-        try {
-            $products = Product::with('images', 'category')->paginate(12);
-            return view('publik.page.all2', compact('products'));
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error loading products: ' . $e->getMessage());
-        }
-    }
+
 }

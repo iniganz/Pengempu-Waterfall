@@ -1,34 +1,56 @@
+@php
+    // Define all steps in order
+    $allSteps = [
+        'product' => ['label' => 'Product List', 'order' => 1],
+        'product-detail' => ['label' => 'Product Detail', 'order' => 2],
+        'booking' => ['label' => 'Booking Detail', 'order' => 3],
+        'payment' => ['label' => 'Payment', 'order' => 4],
+        'finish' => ['label' => 'Finish', 'order' => 5],
+    ];
+
+    // Determine current step based on route
+    $currentRoute = request()->route()->getName();
+    $currentStep = null;
+    $currentOrder = 0;
+
+    if (str_contains($currentRoute, 'product') && !str_contains($currentRoute, 'booking')) {
+        $currentStep = 'product-detail';
+        $currentOrder = 2;
+    } elseif (str_contains($currentRoute, 'booking.show')) {
+        $currentStep = 'booking';
+        $currentOrder = 3;
+    } elseif (str_contains($currentRoute, 'booking.payment')) {
+        $currentStep = 'payment';
+        $currentOrder = 4;
+    } elseif (str_contains($currentRoute, 'booking.finish')) {
+        $currentStep = 'finish';
+        $currentOrder = 5;
+    }
+@endphp
+
 <div class="d-flex flex-wrap align-items-center mb-4 small" style="gap:10px;">
-    <span class="fw-semibold text-primary">Product List</span>
-    <span>→</span>
-    <span class="fw-semibold text-primary">Product Detail</span>
-    <span>→</span>
-    {{-- <span class="fw-semibold text-primary">Shopping Cart</span>
-    <span>→</span> --}}
-    <span class="fw-semibold text-primary">Booking Detail</span>
-    <span>→</span>
-    <span class="text-muted">Payment</span>
-    <span>→</span>
-    <span class="text-muted">Finish</span>
-</div>
+    @foreach ($allSteps as $stepKey => $step)
+        @php
+            // Step sebelum current step = completed (✓)
+            $isCompleted = $step['order'] < $currentOrder;
 
+            // Step saat ini = active (biru)
+            $isActive = $currentStep === $stepKey;
 
-{{-- <div class="booking-steps">
-    @php
-        $steps = [
-            'Product List',
-            'Product Detail',
-            'Shopping Cart',
-            'Booking Detail',
-            'Payment',
-            'Finish'
-        ];
-    @endphp
+            // Step sesudah current step = disabled (abu-abu)
+            $isDisabled = $step['order'] > $currentOrder;
+        @endphp
 
-    @foreach ($steps as $i => $label)
-        <div class="step-item {{ $i < $currentStep ? 'done' : '' }}">
-            <span class="step-badge">{{ $i + 1 }}</span>
-            {{ $label }}
-        </div>
+        <span class="fw-semibold {{ $isActive ? 'text-primary' : ($isCompleted ? 'text-success' : 'text-muted') }}">
+            @if($isCompleted)
+                ✓ {{ $step['label'] }}
+            @else
+                {{ $step['label'] }}
+            @endif
+        </span>
+
+        @if (!$loop->last)
+            <span class="text-muted">→</span>
+        @endif
     @endforeach
-</div> --}}
+</div>

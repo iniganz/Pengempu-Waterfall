@@ -12,7 +12,12 @@ use Illuminate\Support\Facades\Log;
 class KontakController extends Controller
 {
 
-
+    public function contact()
+    {
+        return view('publik.page.contact', [
+            'title' => 'Contact',
+        ]);
+    }
 
     public function send(Request $request)
     {

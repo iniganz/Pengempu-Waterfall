@@ -43,7 +43,7 @@
                         <i class="bi bi-envelope flex-shrink-0"></i>
                         <div>
                             <h3>Email</h3>
-                            <p>waterfallpengempu@gmail.com</p>
+                            <p>pengempuw@gmail.com</p>
                         </div>
                     </div>
                 </div>

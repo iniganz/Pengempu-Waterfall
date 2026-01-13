@@ -3,7 +3,18 @@
     position: relative;
     padding: 100px 0;
     background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 50%, #fab1a0 100%);
-    padding-bottom: -1;
+}
+
+@media (max-width: 768px) {
+    .testimonials {
+        padding: 50px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .testimonials {
+        padding: 30px 0;
+    }
 }
 
 .testimonials-bg {
@@ -29,6 +40,23 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+    .testimonial-item {
+        padding: 20px;
+        margin: 15px;
+        min-height: 350px;
+    }
+}
+
+@media (max-width: 576px) {
+    .testimonial-item {
+        padding: 15px;
+        margin: 10px;
+        min-height: 300px;
+        border-radius: 15px;
+    }
 }
 
 .testimonial-item:hover {
@@ -64,6 +92,22 @@
     flex-shrink: 0;
 }
 
+@media (max-width: 768px) {
+    .testimonial-img {
+        width: 60px;
+        height: 60px;
+        margin-right: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .testimonial-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+}
+
 .user-info {
     flex: 1;
 }
@@ -73,6 +117,18 @@
     font-size: 16px;
     font-weight: 700;
     color: #333;
+}
+
+@media (max-width: 768px) {
+    .user-info h3 {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .user-info h3 {
+        font-size: 12px;
+    }
 }
 
 .user-info h4 {
@@ -95,6 +151,21 @@
     margin: 20px 0;
     text-align: center;
     flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+    .testimonial-item p {
+        font-size: 13px;
+        margin: 15px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .testimonial-item p {
+        font-size: 12px;
+        margin: 10px 0;
+        line-height: 1.5;
+    }
 }
 
 .quote-icon-left,
@@ -134,6 +205,22 @@
     border-radius: 50%;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 35px;
+        height: 35px;
+    }
 }
 
 .swiper-button-next:hover,

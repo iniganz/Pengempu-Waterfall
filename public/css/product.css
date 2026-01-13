@@ -98,7 +98,7 @@
      }
 
      .price-box {
-         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         background: linear-gradient(135deg, #0b5302 0%, #764ba2 100%);
          color: white;
          padding: 20px;
          border-radius: 10px;
@@ -153,7 +153,7 @@
      }
 
      .booking-btn {
-         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         background: linear-gradient(135deg, #0b5302 0%, #764ba2 100%);
          color: white;
          border: none;
          padding: 15px 40px;
@@ -207,6 +207,10 @@
 
      /* Mobile Layout */
      @media (max-width: 768px) {
+         .gallery-container {
+             padding: 20px 0;
+         }
+
          .gallery-layout {
              grid-template-columns: 1fr;
              gap: 20px;
@@ -215,7 +219,8 @@
 
          .thumbnails-container {
              grid-template-columns: repeat(3, 1fr);
-             max-height: none;
+             max-height: 300px;
+             gap: 10px;
          }
 
          .main-image-container {
@@ -228,6 +233,11 @@
 
          .info-section h1 {
              font-size: 1.5rem;
+             margin-bottom: 12px;
+         }
+
+         .info-section .description {
+             font-size: 0.9rem;
          }
 
          .features-box {
@@ -235,17 +245,31 @@
          }
 
          .features-list li {
-             font-size: 0.9rem;
+             font-size: 0.85rem;
          }
 
          .map-container iframe {
              height: 300px;
          }
+
+         .booking-btn {
+             padding: 12px 20px;
+             font-size: 0.95rem;
+         }
+
+         .price-box .price {
+             font-size: 1.8rem;
+         }
      }
 
-     @media (max-width: 480px) {
+     @media (max-width: 576px) {
          .gallery-container {
-             padding: 20px 0;
+             padding: 15px 0;
+         }
+
+         .product-section {
+             border-radius: 10px;
+             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
          }
 
          .gallery-layout {
@@ -255,28 +279,138 @@
 
          .info-section {
              padding: 15px;
+             border-radius: 10px;
          }
 
          .info-section h1 {
-             font-size: 1.3rem;
+             font-size: 1.2rem;
+             margin-bottom: 10px;
+         }
+
+         .info-section .description {
+             font-size: 0.85rem;
+             margin-bottom: 15px;
          }
 
          .thumbnails-container {
              grid-template-columns: repeat(4, 1fr);
              gap: 8px;
+             max-height: 250px;
+         }
+
+         .thumb {
+             border-radius: 6px;
+         }
+
+         .price-box {
+             padding: 15px;
+             border-radius: 8px;
          }
 
          .price-box .price {
              font-size: 1.5rem;
          }
 
+         .price-box .original-price {
+             font-size: 0.9rem;
+         }
+
          .booking-btn {
-             padding: 12px 20px;
+             padding: 10px 16px;
+             font-size: 0.9rem;
+             width: 100%;
+         }
+
+         .features-box {
+             padding: 12px;
+         }
+
+         .features-box h3 {
              font-size: 1rem;
+         }
+
+         .features-list li {
+             font-size: 0.8rem;
+             padding: 6px 0;
+         }
+
+         .map-container {
+             padding: 15px;
          }
 
          .map-container iframe {
              height: 250px;
+         }
+
+         .section-title-wrapper h2 {
+             font-size: 1.8rem;
+         }
+
+         .section-title-wrapper p {
+             font-size: 0.95rem;
+         }
+     }
+
+     @media (max-width: 480px) {
+         .gallery-container {
+             padding: 10px 0;
+         }
+
+         .gallery-layout {
+             padding: 12px;
+             gap: 12px;
+         }
+
+         .main-image-container {
+             aspect-ratio: 1;
+             border-radius: 8px;
+         }
+
+         .info-section {
+             padding: 12px;
+         }
+
+         .info-section h1 {
+             font-size: 1.1rem;
+         }
+
+         .info-section .description {
+             font-size: 0.8rem;
+             line-height: 1.4;
+         }
+
+         .thumbnails-container {
+             grid-template-columns: repeat(4, 1fr);
+             gap: 6px;
+         }
+
+         .price-box {
+             padding: 12px;
+         }
+
+         .price-box .price {
+             font-size: 1.3rem;
+         }
+
+         .booking-btn {
+             padding: 10px 12px;
+             font-size: 0.85rem;
+         }
+
+         .features-list li {
+             font-size: 0.75rem;
+         }
+
+         .map-container iframe {
+             height: 200px;
+         }
+
+         .section-title-wrapper h2 {
+             font-size: 1.5rem;
+         }
+
+         .section-title-wrapper p {
+             font-size: 0.85rem;
          }
      }
 

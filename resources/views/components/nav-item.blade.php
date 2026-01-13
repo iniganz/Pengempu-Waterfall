@@ -9,6 +9,8 @@ $base = '
     text-base
     transition-colors transition-shadow
     duration-300
+    text-lg
+
 ';
 
 $classes = ($active ?? false)

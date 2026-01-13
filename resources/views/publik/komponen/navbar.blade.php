@@ -31,7 +31,9 @@
 
     <button type="button"
         class="hidden h-11 w-40 rounded-full bg-white text-sm text-gray-700 transition-all hover:opacity-90 active:scale-95 md:inline font-semibold">
-        Get started
+       <a href="{{ route('product') }}">
+        Get Ticket
+        </a>
     </button>
 
     <button aria-label="menu-btn" type="button" class="menu-btn inline-block transition active:scale-90 md:hidden">

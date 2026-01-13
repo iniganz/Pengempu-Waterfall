@@ -27,6 +27,12 @@
                     <x-nav-link :href="route('dashboard.places.index')" :active="request()->routeIs('dashboard.places.index')">
                         {{ __('Places') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('dashboard.orders.index')" :active="request()->routeIs('dashboard.orders.index')">
+                        {{ __('Orders') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('ticket.scan')" :active="request()->routeIs('ticket.scan')">
+                        {{ __('🔍 Scan Tiket') }}
+                    </x-nav-link>
                 </div>
 
             </div>
@@ -90,6 +96,24 @@
         <div class="space-y-1 pb-3 pt-2">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard.post')" :active="request()->routeIs('dashboard.post')">
+                {{ __('Post') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard.gallery')" :active="request()->routeIs('dashboard.gallery.*')">
+                {{ __('Gallery') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard.testimonials')" :active="request()->routeIs('dashboard.testimonials')">
+                {{ __('Testimonial') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard.places.index')" :active="request()->routeIs('dashboard.places.index')">
+                {{ __('Places') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard.orders.index')" :active="request()->routeIs('dashboard.orders.index')">
+                {{ __('Orders') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('ticket.scan')" :active="request()->routeIs('ticket.scan')">
+                {{ __('🔍 Scan Tiket') }}
             </x-responsive-nav-link>
         </div>
 

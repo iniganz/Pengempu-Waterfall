@@ -1,14 +1,11 @@
 @extends('publik.layout.index')
 
 @section('content')
-    <style>
-
-    </style>
 
     <section class="gallery-container">
         <div class="container">
             <div class="section-title-wrapper product-container cuypg">
-                <h2 style="color: white !important;">{{ $product->title ?? 'Pengempu Waterfall' }}</h2>
+                <h2 >{{ $product->title ?? 'Pengempu Waterfall' }}</h2>
                 <p>Discover the beauty of nature</p>
             </div>
 

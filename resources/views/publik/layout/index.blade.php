@@ -29,6 +29,8 @@
     <!-- Tambahkan Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    {{-- Script stack will be rendered before closing body to avoid duplicate Snap loads --}}
+
     <!-- Vendor CSS Files -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}">
@@ -44,7 +46,7 @@
     {{-- <link href="assets/css/main.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/testimoni.css"> --}}
     {{-- <link rel="stylesheet" href="{{ asset(path: 'css/main.css') }}"> --}}
-    <link rel="stylesheet" href="{{ asset(path: 'css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ asset(path: 'css/app.css') }}">
     <link rel="stylesheet" href="{{ asset(path: 'css/product.css') }}">
     <link rel="stylesheet" href="/css/wa.css">
     <link rel="stylesheet" href="/css/booking.css">
@@ -133,6 +135,7 @@
     <script src="/js/testimonials-efek.js"></script>
     <script src="/js/place.js"></script>
     <script src="/js/booking.js"></script>
+    <script src="/js/snap.js"></script>
     <!-- <script src="assets/js/klik.js"></script> -->
 
     <!-- animasi JS -->

@@ -1,6 +1,48 @@
 @extends('publik.layout.index')
 
 @section('content')
+    <!-- Pending Alert Modal -->
+    @if(session('success') && session('pending_post_id'))
+        <div class="modal fade show" id="pendingModal" tabindex="-1" role="dialog" aria-labelledby="pendingModalLabel" aria-modal="true" style="display: block; background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-warning">
+                    <div class="modal-header bg-warning text-dark border-warning">
+                        <h5 class="modal-title" id="pendingModalLabel">⏳ Foto Menunggu Persetujuan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div style="font-size: 60px; margin-bottom: 15px;">📸</div>
+                        <p class="fs-5 fw-bold text-dark">Terima Kasih, {{ session('pending_post_name') }}!</p>
+                        <p class="text-muted">Foto Anda telah berhasil diupload.</p>
+                        <hr>
+                        <div class="alert alert-warning mb-3" role="alert">
+                            <strong>Status:</strong> Menunggu Persetujuan Admin
+                        </div>
+                        <p class="small text-muted mb-2">📋 Tim kami sedang mereview foto Anda.</p>
+                        <p class="small text-muted">Foto akan ditampilkan di gallery setelah mendapat persetujuan dari admin. Mohon bersabar! 🙏</p>
+                        <hr>
+                        <p class="text-success small"><strong>✓ Anda akan melihat foto Anda segera!</strong></p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center">
+                        <button type="button" class="btn btn-warning btn-lg" data-bs-dismiss="modal">Mengerti</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = new bootstrap.Modal(document.getElementById('pendingModal'));
+                modal.show();
+
+                // Auto-close after 6 seconds
+                setTimeout(() => {
+                    modal.hide();
+                }, 6000);
+            });
+        </script>
+    @endif
+
     <!-- Portfolio Section -->
     <section id="portfolio" class="portfolio section">
         <!-- Section Title -->
@@ -36,7 +78,7 @@
                     @endforelse
                 </div>
                 <div class="mt-4">
-                    {{ $galleryPosts->links() }}
+                    {{ $galleryPosts->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>

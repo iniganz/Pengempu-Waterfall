@@ -68,7 +68,9 @@
                         <h1>PENGEMPU WATERFALL</h1>
                         <p>Link web ni</p>
                         <h3>Nikmati Ketenangan Alam Bali dari Sisi yang Berbeda bersama Pengempu Waterfall</h3>
-                        <p class="text-justify">
+
+                        <!-- Desktop Description (Panjang) -->
+                        <p class="text-justify d-none d-md-block">
                             Pengempu Waterfall adalah destinasi wisata alam tersembunyi yang menawarkan keasrian aliran air
                             terjun jernih di tengah rimbunnya pepohonan Bali. Berbeda dengan wisata air terjun pada umumnya
                             yang seringkali sulit dijangkau dengan medan berat, Pengempu Waterfall memiliki akses jalur yang
@@ -86,8 +88,11 @@
                             melelahkan.
                             Mana yang paling cocok untuk rencana liburan Anda dan keluarga? Mari simak detailnya di bawah
                             ini:
+                        </p>
 
-
+                        <!-- Mobile Description (Ringkas) -->
+                        <p class="text-justify d-block d-md-none">
+                            Pengempu Waterfall adalah destinasi wisata alam tersembunyi dengan akses jalur yang mudah dan aman, cocok untuk keluarga dan anak-anak. Nikmati kesegaran air terjun jernih dengan suara gemericik air yang menenangkan, dikelola secara profesional untuk keamanan dan kenyamanan Anda. Terletak di Desa Cau Belayu, Tabanan – hanya perjalanan singkat dari pusat kota.
                         </p>
                     </div>
                 </div>
@@ -95,7 +100,7 @@
             </div>
 
         </section><!-- /About Section -->
-        <section id="services" class="services section d-none d-md-block">
+        <section id="services" class="services section">
             <div class="section-title container" data-aos="fade-up" data-aos-delay="200">
                 <p class="cuyp text-center">PENGEMPU WATERFALL PACKAGES</p>
             </div>
@@ -107,7 +112,7 @@
 
                             <!-- IMAGE -->
                             <div class="waterfall-image">
-                                <img src="/images/pakages-im.jpg" alt="Pengempu Waterfall">
+                                <img src="/images/water1.jpg" alt="Pengempu Waterfall">
                                 <!-- WAVES -->
                                 <div class="wave wave-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"

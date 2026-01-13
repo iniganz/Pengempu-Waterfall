@@ -15,7 +15,7 @@ class PlaceController extends Controller
      */
     public function index()
     {
-        $places = Place::latest()->get();
+        $places = Place::latest()->paginate(10);
         return view('dashboard.places.index', compact('places'));
     }
 

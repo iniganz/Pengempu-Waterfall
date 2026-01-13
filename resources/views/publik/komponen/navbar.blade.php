@@ -1,6 +1,6 @@
 {{-- <header id="header" class="header d-flex align-items-center fixed-top"> --}}
 <nav
-    class="relative z-30 flex h-[120px] w-full items-center justify-between bg-gradient-to-r from-green-900 to-green-500 px-6 transition-all md:px-16 lg:px-24 xl:px-32 shadow-lg">
+    class="relative z-30 flex h-[120px] w-full items-center justify-between bg-gradient-to-r from-green-900 to-green-500 px-6 shadow-lg transition-all md:px-16 lg:px-24 xl:px-32">
 
     <a href="{{ url('/') }}" class="flex-shrink-0">
         <img src="{{ asset('images/pengempu.png') }}" alt="Pengempu Waterfall Logo" class="h-[100px] w-auto">
@@ -30,9 +30,9 @@
     </ul>
 
     <button type="button"
-        class="hidden h-11 w-40 rounded-full bg-white text-sm text-gray-700 transition-all hover:opacity-90 active:scale-95 md:inline font-semibold">
-       <a href="{{ route('product') }}">
-        Get Ticket
+        class="hidden h-11 w-40 rounded-full bg-white text-sm font-semibold text-gray-700 transition-all hover:opacity-90 active:scale-95 md:inline">
+        <a href="{{ route('product') }}">
+            Get Ticket
         </a>
     </button>
 
@@ -44,16 +44,19 @@
     </button>
 
     <div
-        class="mobile-menu absolute left-0 top-[120px] hidden w-full bg-gradient-to-r from-emerald-900 to-green-600 p-6 md:hidden shadow-lg">
+        class="mobile-menu absolute left-0 top-[120px] hidden w-full bg-gradient-to-r from-emerald-900 to-green-600 p-6 shadow-lg md:hidden">
         <ul class="flex flex-col space-y-4 text-lg text-white">
-            <li><a href="{{ url('/') }}" class="text-sm hover:text-gray-200 transition">Home</a></li>
-            <li><a href="{{ route('galery') }}" class="text-sm hover:text-gray-200 transition">Galery</a></li>
-            <li><a href="{{ route('explore-sekitar') }}" class="text-sm hover:text-gray-200 transition">Explore Sekitar</a></li>
-            <li><a href="{{ route('contact') }}" class="text-sm hover:text-gray-200 transition">Kontak</a></li>
+            <li><a href="{{ url('/') }}" class="text-sm transition hover:text-gray-200">Home</a></li>
+            <li><a href="{{ route('galery') }}" class="text-sm transition hover:text-gray-200">Galery</a></li>
+            <li><a href="{{ route('explore-sekitar') }}" class="text-sm transition hover:text-gray-200">Explore
+                    Sekitar</a></li>
+            <li><a href="{{ route('contact') }}" class="text-sm transition hover:text-gray-200">Kontak</a></li>
         </ul>
         <button type="button"
-            class="mt-6 w-full h-11 rounded-full bg-white text-sm text-gray-700 transition-all hover:opacity-90 active:scale-95 font-semibold">
-            Get started
+            class="mt-6 h-11 w-full rounded-full bg-white text-sm font-semibold text-gray-700 transition-all hover:opacity-90 active:scale-95">
+            <a href="{{ route('product') }}">
+                Get Ticket
+            </a>
         </button>
     </div>
 </nav>

@@ -40,7 +40,7 @@
                     <li><a href="{{ route('galery') }}" class="text-green-100 hover:text-white transition text-sm">Galery</a></li>
                     <li><a href="{{ route('explore-sekitar') }}" class="text-green-100 hover:text-white transition text-sm">Explore Sekitar</a></li>
                     <li><a href="{{ route('contact') }}" class="text-green-100 hover:text-white transition text-sm">Kontak</a></li>
-                    <li><a href="{{ route('product') }}" class="text-green-100 hover:text-white transition text-sm">Booking Tiket</a></li>
+                    <li><a href="{{ route('product.show', 1) }}" class="text-green-100 hover:text-white transition text-sm">Booking Tiket</a></li>
                 </ul>
             </div>
 

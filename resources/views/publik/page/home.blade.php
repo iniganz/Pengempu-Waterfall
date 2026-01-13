@@ -66,7 +66,7 @@
                         <h3>Ways You Can pay</h3>
                         <img src="/images/payment-method.png" alt="Payment Methods" class="img-payment-about">
                         <h1>PENGEMPU WATERFALL</h1>
-                        <p>https://pengempu-waterfall-production.up.railway.app/</p>
+                        <p>Link web ni</p>
                         <h3>Nikmati Ketenangan Alam Bali dari Sisi yang Berbeda bersama Pengempu Waterfall</h3>
 
                         <!-- Desktop Description (Panjang) -->
@@ -157,9 +157,7 @@
                                     yang sangat mudah, berlokasi di Desa Cau Belayu, Tabanan – BALI.
                                 </p>
 
-                                <a href="{{ route('product.show', 1) }}" class="btn-more">More Info</a>
-
-
+                                <a href="{{ route('product') }}" class="btn-more">More Info</a>
                             </div>
                         </div>
                     </div>

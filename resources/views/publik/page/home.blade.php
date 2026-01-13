@@ -157,7 +157,7 @@
                                     yang sangat mudah, berlokasi di Desa Cau Belayu, Tabanan – BALI.
                                 </p>
 
-                                <a href="{{ route('product') }}" class="btn-more">More Info</a>
+                                <a href="/product" class="btn-more">More Info</a>
                             </div>
                         </div>
                     </div>

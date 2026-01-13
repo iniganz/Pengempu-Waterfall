@@ -29,9 +29,22 @@ class ProductController extends Controller
     public function show()
     {
         try {
+            // Try to get product with slug 'pengempu-waterfall'
             $product = Product::with('images', 'category', 'platforms')
                 ->where('slug', 'pengempu-waterfall')
-                ->firstOrFail();
+                ->first();
+
+            // If not found, get the first published product
+            if (!$product) {
+                $product = Product::with('images', 'category', 'platforms')
+                    ->where('published', true)
+                    ->first();
+            }
+
+            // If still not found, throw error
+            if (!$product) {
+                return back()->with('error', 'Produk tidak ditemukan');
+            }
 
             return view('publik.page.product', compact('product'));
         } catch (\Exception $e) {

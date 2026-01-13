@@ -6,7 +6,7 @@
             <!-- About Section -->
             <div class="col-span-1">
                 <div class="flex items-center gap-3 mb-4">
-                    <img src="{{ asset('images/pengempu.png') }}" alt="Pengempu Logo" class="h-24 w-auto">
+                    <img src="{{ asset('images/Pengempu.png') }}" alt="Pengempu Logo" class="h-24 w-auto">
                     {{-- <h3 class="text-xl font-bold">Pengempu Waterfall</h3> --}}
                 </div>
                 <p class="text-green-100 text-sm leading-relaxed mb-4">

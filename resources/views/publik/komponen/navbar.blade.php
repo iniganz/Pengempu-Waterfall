@@ -31,7 +31,7 @@
 
     <button type="button"
         class="hidden h-11 w-40 rounded-full bg-white text-sm font-semibold text-gray-700 transition-all hover:opacity-90 active:scale-95 md:inline">
-        <a href="/product">
+       <a href="{{ route('product.show', 1) }}">
             Get Ticket
         </a>
     </button>
@@ -54,7 +54,7 @@
         </ul>
         <button type="button"
             class="mt-6 h-11 w-full rounded-full bg-white text-sm font-semibold text-gray-700 transition-all hover:opacity-90 active:scale-95">
-            <a href="{{ route('product') }}">
+            <a href="{{ route('product.show', 1) }}">
                 Get Ticket
             </a>
         </button>

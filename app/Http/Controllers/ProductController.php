@@ -26,26 +26,19 @@ class ProductController extends Controller
     /**
      * Display product detail (Public) - Pengempu Waterfall
      */
-    public function show($slug = null)
+    public function show($id = null)
     {
         try {
             $product = null;
 
-            // If slug provided, try to get that product
-            if ($slug) {
+            // If ID provided, try to get that product
+            if ($id) {
                 $product = Product::with('images', 'category', 'platforms')
-                    ->where('slug', $slug)
+                    ->where('id', $id)
                     ->first();
             }
 
-            // If not found, try default slug 'pengempu-waterfall'
-            if (!$product) {
-                $product = Product::with('images', 'category', 'platforms')
-                    ->where('slug', 'pengempu-waterfall')
-                    ->first();
-            }
-
-            // If still not found, get the first published product
+            // If not found, get the first published product
             if (!$product) {
                 $product = Product::with('images', 'category', 'platforms')
                     ->where('published', true)

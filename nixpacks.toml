@@ -10,13 +10,18 @@ cmds = [
 cmds = [
   "composer install --no-dev --optimize-autoloader",
   "php artisan key:generate --force || true",
-  "php artisan migrate --force || true",
-  "php artisan storage:link || true",
   "php artisan config:clear",
   "php artisan cache:clear",
   "php artisan view:clear",
-  "php artisan config:cache",
   "npm run build"
+]
+
+[phases.deploy]
+cmds = [
+  "php artisan migrate --force",
+  "php artisan db:seed --force",
+  "php artisan storage:link",
+  "php artisan config:cache"
 ]
 
 

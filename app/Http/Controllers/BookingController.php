@@ -13,6 +13,7 @@ use Midtrans\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Jobs\SendTicketEmail;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -265,7 +266,8 @@ public function finish(Request $request, Product $product)
             Config::$serverKey = config('services.midtrans.server_key');
             Config::$isProduction = config('services.midtrans.is_production');
 
-            /** @var array $statusResponse */
+            // Get transaction status from Midtrans
+            // @phpstan-ignore-next-line
             $statusResponse = (array) Transaction::status($orderId);
 
             // ✅ FIX MERAH DI SINI

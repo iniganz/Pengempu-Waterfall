@@ -53,7 +53,7 @@ class KontakController extends Controller
 
             return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
         } catch (\Throwable $e) {
-            Log::error('Contact mail error: ' . $e->getMessage());
+            Log::error('Contact mail error', ['error' => $e->getMessage(), 'from' => $data['email'] ?? null]);
             return back()->with('error', 'Maaf, pesan gagal dikirim.');
         }
     }

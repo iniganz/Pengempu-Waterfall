@@ -300,18 +300,22 @@ public function finish(Request $request, Product $product)
                             ])->render();
 
                             ResendMailer::send(
-                                from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                                from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
                                 to: (string) $order->email,
                                 subject: 'Tiket Anda - Pengempu Waterfall',
                                 html: $html
                             );
-                            Log::info('Ticket email sent via Resend to: ' . $order->email);
+                            Log::info('Ticket email sent via Resend', ['to' => $order->email, 'order_id' => $order->order_id]);
                         } else {
                             Mail::to($order->email)->send(new TicketMail($order, $ticket));
                             Log::info('Ticket email dispatched via Laravel mailer to: ' . $order->email);
                         }
                     } catch (\Throwable $emailEx) {
-                        Log::error('Failed to send ticket email: ' . $emailEx->getMessage());
+                        Log::error('Failed to send ticket email', [
+                            'order_id' => $order->order_id,
+                            'to' => $order->email,
+                            'error' => $emailEx->getMessage(),
+                        ]);
                     }
 
                     Log::info('Ticket created: ' . $ticket->ticket_code);

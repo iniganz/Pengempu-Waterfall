@@ -56,18 +56,22 @@ class MidtransController extends Controller
                         ])->render();
 
                         ResendMailer::send(
-                            from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                            from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
                             to: (string) $order->email,
                             subject: 'Tiket Anda - Pengempu Waterfall',
                             html: $html
                         );
-                        Log::info('Ticket email sent via Resend to: ' . $order->email);
+                        Log::info('Ticket email sent via Resend', ['to' => $order->email, 'order_id' => $order->order_id]);
                     } else {
                         Mail::to($order->email)->send(new TicketMail($order, $ticket));
                         Log::info('Ticket email dispatched via Laravel mailer to: ' . $order->email);
                     }
                 } catch (\Throwable $e) {
-                    Log::error('Failed to send ticket email: ' . $e->getMessage());
+                    Log::error('Failed to send ticket email', [
+                        'order_id' => $order->order_id,
+                        'to' => $order->email,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             } else {
                 Log::info('Ticket already exists for order: ' . $order->order_id);

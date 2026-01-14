@@ -64,6 +64,8 @@ class OrderAdminController extends Controller
             }
 
             // DEBUG: Log environment variables
+            error_log('[OrderAdmin] BEFORE email send - MAIL_MAILER: ' . env('MAIL_MAILER') . ', RESEND_API_KEY exists: ' . (env('RESEND_API_KEY') ? 'YES' : 'NO'));
+
             Log::info('BEFORE email send - checking environment', [
                 'MAIL_MAILER' => env('MAIL_MAILER'),
                 'RESEND_API_KEY_exists' => env('RESEND_API_KEY') ? 'YES' : 'NO',
@@ -75,14 +77,18 @@ class OrderAdminController extends Controller
             $mailMailer = env('MAIL_MAILER');
             $resendKey = env('RESEND_API_KEY');
 
+            $conditionResult = (($mailMailer === 'resend') || $resendKey) ? 'WILL_USE_RESEND' : 'WILL_USE_LARAVEL_MAILER';
+            error_log('[OrderAdmin] Conditional check: ' . $conditionResult);
+
             Log::info('Conditional check', [
                 'MAIL_MAILER_value' => $mailMailer,
                 'MAIL_MAILER_is_resend' => ($mailMailer === 'resend'),
                 'RESEND_API_KEY_truthy' => $resendKey ? 'TRUE' : 'FALSE',
-                'condition_result' => (($mailMailer === 'resend') || $resendKey) ? 'WILL_USE_RESEND' : 'WILL_USE_LARAVEL_MAILER',
+                'condition_result' => $conditionResult,
             ]);
 
             if ($mailMailer === 'resend' || $resendKey) {
+                error_log('[OrderAdmin] INSIDE Resend branch - about to render view');
                 Log::info('INSIDE Resend branch - about to render view');
 
                 $html = View::make('mail.ticket', [

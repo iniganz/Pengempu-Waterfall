@@ -26,23 +26,21 @@ class ProductController extends Controller
     /**
      * Display product detail (Public) - Pengempu Waterfall
      */
-    public function show()
+    public function show($product = null)
     {
         try {
+            // If a slug is provided (e.g. route('product', ['product' => 'pengempu-waterfall']))
+            // use it; otherwise fall back to the Pengempu Waterfall product
+            $slug = $product ?? 'pengempu-waterfall';
+
             $product = Product::with('images', 'category', 'platforms')
-                ->where('slug', 'pengempu-waterfall')
+                ->where('slug', $slug)
                 ->firstOrFail();
 
             return view('publik.page.product', compact('product'));
         } catch (\Exception $e) {
             return back()->with('error', 'Error loading product: ' . $e->getMessage());
         }
-    }
-
-public function shows()
-    {
-        return view('publik.page.product', compact('product'));
-       
     }
 
 

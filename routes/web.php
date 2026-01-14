@@ -34,8 +34,10 @@ Route::post('/contact/send', [KontakController::class, 'send'])->name('contact.s
 
 
 Route::get('/galery', [GalleryPostController::class, 'publicGallery'])->name('galery');
-Route::get('/product', [ProductController::class, 'show'])->name('product');
-Route::get('/products', [ProductController::class, 'shows'])->name('products');
+// Product detail; accept optional slug (for backwards compatibility some links send a 'product' param)
+Route::get('/product/{product?}', [ProductController::class, 'show'])->name('product');
+// Products list
+Route::get('/products', [ProductController::class, 'index'])->name('products');
 
 Route::get('/explore-sekitar', [ExploreController::class, 'index'])->name('explore-sekitar');
 Route::get('/explore-sekitar/{slug}', [ExploreController::class, 'show']);

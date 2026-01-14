@@ -29,8 +29,9 @@ class KontakController extends Controller
         ]);
 
         try {
+            // Use queue to prevent timeout
             Mail::to('pengempuw@gmail.com')
-                ->send(new SendMail($data));
+                ->queue(new SendMail($data));
 
             return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
         } catch (\Exception $e) {

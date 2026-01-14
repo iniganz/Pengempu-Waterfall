@@ -41,13 +41,14 @@ class MidtransController extends Controller
 
                 Log::info('Ticket created', ['ticket_code' => $ticket->ticket_code]);
 
+                // Send email asynchronously via queue (prevents timeout)
                 try {
-                    Mail::to($order->email)->send(
+                    Mail::to($order->email)->queue(
                         new TicketMail($order, $ticket)
                     );
-                    Log::info('Ticket email sent to: ' . $order->email);
+                    Log::info('Ticket email queued for: ' . $order->email);
                 } catch (\Exception $e) {
-                    Log::error('Failed to send ticket email: ' . $e->getMessage());
+                    Log::error('Failed to queue ticket email: ' . $e->getMessage());
                 }
             } else {
                 Log::info('Ticket already exists for order: ' . $order->order_id);

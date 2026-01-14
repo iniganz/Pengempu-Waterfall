@@ -103,13 +103,55 @@ php artisan db:seed --force
 ```
 
 ### Gallery Images tidak muncul
-**Penyebab:** Symlink storage belum dibuat.
+**Penyebab:** Railway menggunakan ephemeral filesystem - file upload hilang setiap deploy/restart.
 
-**Solusi:**
+**Solusi Sementara (Development):**
+- Gunakan gambar dari `public/images/` yang di-commit ke repo
+- Jangan upload gambar baru via dashboard (akan hilang saat restart)
+
+**Solusi Production (Recommended):**
+
+**1. Menggunakan Railway Volume (Beta)**
 ```bash
-railway run php artisan storage:link
+# Di Railway Dashboard:
+# 1. Go to Settings → Volumes
+# 2. Add New Volume → Mount path: /app/storage/app/public
+# 3. Redeploy aplikasi
 ```
-Atau tambahkan ke Pre-deploy Command.
+
+**2. Menggunakan Cloud Storage (S3/DigitalOcean Spaces/Cloudinary)**
+
+Install package S3:
+```bash
+composer require league/flysystem-aws-s3-v3 "^3.0"
+```
+
+Set di Railway Variables:
+```
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=your_bucket_name
+AWS_URL=https://your_bucket.s3.amazonaws.com
+```
+
+Update `GalleryAdminController` untuk gunakan disk yang benar:
+```php
+// Ganti:
+$path = $request->file('image')->store('products', 'public');
+
+// Menjadi:
+$path = $request->file('image')->store('products', config('filesystems.default'));
+```
+
+**3. Menggunakan ImgBB (Gratis & Simple)**
+- Sign up di https://imgbb.com
+- Get API key
+- Upload gambar via API
+- Simpan URL di database (bukan path file)
+
+**Catatan:** Untuk sementara, gambar dari seeder (yang ada di `public/images/`) akan tetap tampil karena ter-commit di repo.
 
 ### Email tidak terkirim
 **Penyebab:** MAIL_MAILER masih `log` atau kredensial SMTP salah.

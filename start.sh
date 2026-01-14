@@ -9,8 +9,6 @@ php artisan view:clear
 # Ensure storage symlink exists (Railway/Nixpacks runtime can lose it)
 php artisan storage:link || true
 
-# Start queue worker in background for email sending
-php artisan queue:work database --sleep=3 --tries=3 --max-time=3600 &
-
 # Start web server in foreground
+# Queue disabled - using QUEUE_CONNECTION=sync for immediate email sending
 php artisan serve --host=0.0.0.0 --port=$PORT

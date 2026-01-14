@@ -87,13 +87,13 @@ class OrderAdminController extends Controller
                 'condition_result' => $conditionResult,
             ]);
 
-            // Use queue for non-blocking email (Gmail SMTP can be slow)
+            // Send email based on mailer config
             if ($mailMailer === 'smtp' || $mailMailer === 'gmail') {
-                Log::info('Using Gmail SMTP via queue (non-blocking)');
+                Log::info('Using Gmail SMTP (sync mode)');
 
-                Mail::to($order->email)->queue(new TicketMail($order, $ticket));
+                Mail::to($order->email)->send(new TicketMail($order, $ticket));
 
-                Log::info('Admin resend ticket queued via Gmail SMTP', ['order_id' => $order->order_id, 'to' => $order->email]);
+                Log::info('Admin resend ticket sent via Gmail SMTP', ['order_id' => $order->order_id, 'to' => $order->email]);
                 $resendId = null;
             } elseif ($mailMailer === 'resend' || $resendKey) {
                 error_log('[OrderAdmin] INSIDE Resend branch - about to render view');

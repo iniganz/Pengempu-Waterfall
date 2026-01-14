@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
+use App\Services\ResendMailer;
 
 class MidtransController extends Controller
 {
@@ -45,13 +47,26 @@ class MidtransController extends Controller
 
                 Log::info('Ticket created', ['ticket_code' => $ticket->ticket_code]);
 
-                // Send ticket email immediately (QUEUE_CONNECTION=sync)
+                // Send ticket email (prefer Resend API in production)
                 try {
-                    Mail::to($order->email)->send(
-                        new TicketMail($order, $ticket)
-                    );
-                    Log::info('Ticket email sent successfully to: ' . $order->email);
-                } catch (\Exception $e) {
+                    if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+                        $html = View::make('mail.ticket', [
+                            'order' => $order,
+                            'ticket' => $ticket,
+                        ])->render();
+
+                        ResendMailer::send(
+                            from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                            to: (string) $order->email,
+                            subject: 'Tiket Anda - Pengempu Waterfall',
+                            html: $html
+                        );
+                        Log::info('Ticket email sent via Resend to: ' . $order->email);
+                    } else {
+                        Mail::to($order->email)->send(new TicketMail($order, $ticket));
+                        Log::info('Ticket email dispatched via Laravel mailer to: ' . $order->email);
+                    }
+                } catch (\Throwable $e) {
                     Log::error('Failed to send ticket email: ' . $e->getMessage());
                 }
             } else {

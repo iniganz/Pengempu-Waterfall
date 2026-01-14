@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use App\Jobs\SendTicketEmail;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
+use App\Services\ResendMailer;
 use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
@@ -289,13 +291,26 @@ public function finish(Request $request, Product $product)
                         'qr_token'   => (string) Str::uuid(),
                     ]);
 
-                    // Send ticket email immediately (QUEUE_CONNECTION=sync)
+                    // Send ticket email (prefer Resend API in production)
                     try {
-                        Mail::to($order->email)->send(
-                            new TicketMail($order, $ticket)
-                        );
-                        Log::info('Ticket email sent successfully to: ' . $order->email);
-                    } catch (\Exception $emailEx) {
+                        if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+                            $html = View::make('mail.ticket', [
+                                'order' => $order,
+                                'ticket' => $ticket,
+                            ])->render();
+
+                            ResendMailer::send(
+                                from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                                to: (string) $order->email,
+                                subject: 'Tiket Anda - Pengempu Waterfall',
+                                html: $html
+                            );
+                            Log::info('Ticket email sent via Resend to: ' . $order->email);
+                        } else {
+                            Mail::to($order->email)->send(new TicketMail($order, $ticket));
+                            Log::info('Ticket email dispatched via Laravel mailer to: ' . $order->email);
+                        }
+                    } catch (\Throwable $emailEx) {
                         Log::error('Failed to send ticket email: ' . $emailEx->getMessage());
                     }
 

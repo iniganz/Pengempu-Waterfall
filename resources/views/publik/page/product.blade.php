@@ -11,11 +11,20 @@
 
             <div class="product-section">
                 @if ($product->images && $product->images->count() > 0)
+                    @php
+                        // Helper: determine image path (check if starts with 'images/' for public/images, else use storage)
+                        $getImageUrl = function($imagePath) {
+                            if (str_starts_with($imagePath, 'images/')) {
+                                return asset($imagePath);
+                            }
+                            return asset('storage/' . $imagePath);
+                        };
+                    @endphp
                     <div class="gallery-layout">
                         <!-- Main Image Column -->
                         <div>
                             <div class="main-image-container">
-                                <img id="mainImage" src="{{ asset('storage/' . $product->images[0]->image_url) }}"
+                                <img id="mainImage" src="{{ $getImageUrl($product->images[0]->image_url) }}"
                                     alt="{{ $product->title }}" class="main-image">
                             </div>
                         </div>
@@ -25,8 +34,8 @@
                             <div class="thumbnails-container">
                                 @forelse($product->images as $index => $image)
                                     <div class="thumb {{ $index === 0 ? 'active' : '' }}"
-                                        data-image="{{ asset('storage/' . $image->image_url) }}">
-                                        <img src="{{ asset('storage/' . $image->image_url) }}"
+                                        data-image="{{ $getImageUrl($image->image_url) }}">
+                                        <img src="{{ $getImageUrl($image->image_url) }}"
                                             alt="Thumbnail {{ $index + 1 }}" loading="lazy">
                                     </div>
                                 @empty

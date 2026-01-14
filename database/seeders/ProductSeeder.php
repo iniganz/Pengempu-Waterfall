@@ -30,10 +30,12 @@ class ProductSeeder extends Seeder
 
         // Add sample images for Pengempu Waterfall (hanya jika belum ada)
         if ($product->images()->count() === 0) {
-            foreach (['waterfall1.jpg', 'waterfall2.jpg', 'waterfall3.jpg', 'waterfall4.jpg'] as $img) {
+            // Gunakan gambar yang ada di public/images atau placeholder
+            $waterfallImages = ['air_terjun1.jpg', 'air_terjun2.jpg', 'air_terjun3.jpg', 'water1.jpg'];
+            foreach ($waterfallImages as $img) {
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_url' => $img
+                    'image_url' => 'images/' . $img  // Path relatif dari public/
                 ]);
             }
         }

@@ -14,9 +14,15 @@
                     @php
                         // Helper: determine image path (check if starts with 'images/' for public/images, else use storage)
                         $getImageUrl = function($imagePath) {
-                            if (str_starts_with($imagePath, 'images/')) {
+                            // Check if it's a full URL (http/https)
+                            if (filter_var($imagePath, FILTER_VALIDATE_URL)) {
+                                return $imagePath;
+                            }
+                            // Check if it starts with 'images/' (public folder)
+                            if (strpos($imagePath, 'images/') === 0) {
                                 return asset($imagePath);
                             }
+                            // Otherwise use storage path
                             return asset('storage/' . $imagePath);
                         };
                     @endphp

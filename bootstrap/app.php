@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'midtrans/webhook',
         ]);
+
+        // Cache static files (images, CSS, JS) for 1 year
+        $middleware->append(\App\Http\Middleware\CacheStaticFiles::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

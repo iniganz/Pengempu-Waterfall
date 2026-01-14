@@ -10,26 +10,26 @@
 
 
                 <div class="carousel-item active">
-                    <img src="/images/air_terjun1.jpg" alt="">
+                    <img src="/images/air_terjun1.jpg" alt="" loading="eager">
                     {{-- <img src="/images/download.jpeg" alt=""> --}}
 
                 </div>
                 <!-- End Carousel Item -->
 
                 <div class="carousel-item">
-                    <img src="/images/air_terjun2.jpg" alt="">
+                    <img src="/images/air_terjun2.jpg" alt="" loading="lazy">
 
                 </div>
                 <!-- End Carousel Item -->
 
                 <div class="carousel-item">
-                    <img src="/images/air_terjun3.jpg" alt="">
+                    <img src="/images/air_terjun3.jpg" alt="" loading="lazy">
 
 
 
                 </div>
                 <div class="carousel-item">
-                    <img src="/images/air_terjun1.jpg" alt="">
+                    <img src="/images/air_terjun1.jpg" alt="" loading="lazy">
 
 
 

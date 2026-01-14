@@ -68,7 +68,7 @@ class MidtransController extends Controller
 
                         // TEMPORARY FIX: Resend free account only sends to pengempuw@gmail.com
                         $recipientEmail = env('APP_ENV') === 'production' ? 'pengempuw@gmail.com' : (string) $order->email;
-                        
+
                         Log::warning('Resend limitation: sending to verified email only', [
                             'original_recipient' => $order->email,
                             'actual_recipient' => $recipientEmail,

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use App\Services\ResendMailer;
+use App\Services\SendGridMailer;
 
 class OrderAdminController extends Controller
 {
@@ -76,23 +77,46 @@ class OrderAdminController extends Controller
             // Send using the same design (TicketMail / mail.ticket), only transport differs.
             $mailMailer = env('MAIL_MAILER');
             $resendKey = env('RESEND_API_KEY');
+            $sendGridKey = env('SENDGRID_API_KEY');
 
             // Determine which email service to use
             $useSmtp = ($mailMailer === 'smtp' || $mailMailer === 'gmail');
             $useResend = ($mailMailer === 'resend' && $resendKey);
+            $useSendGrid = ($mailMailer === 'sendgrid' && $sendGridKey);
 
-            $conditionResult = $useSmtp ? 'WILL_USE_GMAIL_SMTP' : ($useResend ? 'WILL_USE_RESEND' : 'WILL_USE_DEFAULT_MAILER');
+            $conditionResult = $useSendGrid
+                ? 'WILL_USE_SENDGRID'
+                : ($useSmtp ? 'WILL_USE_GMAIL_SMTP' : ($useResend ? 'WILL_USE_RESEND' : 'WILL_USE_DEFAULT_MAILER'));
             error_log('[OrderAdmin] Conditional check: ' . $conditionResult);
 
             Log::info('Conditional check', [
                 'MAIL_MAILER_value' => $mailMailer,
+                'useSendGrid' => $useSendGrid,
                 'useSmtp' => $useSmtp,
                 'useResend' => $useResend,
                 'condition_result' => $conditionResult,
             ]);
 
             // Send email based on mailer config
-            if ($useSmtp) {
+            if ($useSendGrid) {
+                Log::info('Using SendGrid API');
+
+                $html = View::make('mail.ticket', [
+                    'order' => $order,
+                    'ticket' => $ticket,
+                    'qrUrl' => route('ticket.verify', $ticket->qr_token),
+                ])->render();
+
+                SendGridMailer::send(
+                    from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                    to: $order->email,
+                    subject: 'Tiket Resmi - ' . $order->order_id,
+                    html: $html
+                );
+
+                Log::info('Admin resend ticket sent via SendGrid', ['order_id' => $order->order_id, 'to' => $order->email]);
+                $resendId = null;
+            } elseif ($useSmtp) {
                 Log::info('Using Gmail SMTP (sync mode)');
 
                 Mail::to($order->email)->send(new TicketMail($order, $ticket));
@@ -111,19 +135,17 @@ class OrderAdminController extends Controller
 
                 Log::info('View rendered, calling ResendMailer::send()');
 
-                // TEMPORARY FIX: Resend free account only sends to pengempuw@gmail.com
-                // TODO: Verify domain at resend.com/domains then remove this override
-                $recipientEmail = env('APP_ENV') === 'production' ? 'pengempuw@gmail.com' : (string) $order->email;
+                // Kirim langsung ke email customer
+                $recipientEmail = (string) $order->email;
 
-                Log::warning('Resend limitation: sending to verified email only', [
-                    'original_recipient' => $order->email,
-                    'actual_recipient' => $recipientEmail,
+                Log::info('Sending ticket to customer email', [
+                    'recipient' => $recipientEmail,
                 ]);
 
                 $res = ResendMailer::send(
                     from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
                     to: $recipientEmail,
-                    subject: 'Tiket Resmi - ' . $order->order_id . ' (untuk: ' . $order->email . ')',
+                    subject: 'Tiket Resmi - ' . $order->order_id,
                     html: $html
                 );
 

@@ -17,6 +17,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use App\Services\ResendMailer;
+use App\Services\SendGridMailer;
 use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
@@ -298,9 +299,42 @@ public function finish(Request $request, Product $product)
                             'email' => $order->email,
                             'MAIL_MAILER' => env('MAIL_MAILER'),
                             'RESEND_API_KEY_exists' => env('RESEND_API_KEY') ? 'YES' : 'NO',
+                            'SENDGRID_API_KEY_exists' => env('SENDGRID_API_KEY') ? 'YES' : 'NO',
                         ]);
 
-                        if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+                        $mailMailer = env('MAIL_MAILER');
+                        $resendKey = env('RESEND_API_KEY');
+                        $sendGridKey = env('SENDGRID_API_KEY');
+                        $useSendGrid = ($mailMailer === 'sendgrid' && $sendGridKey);
+                        $useResend = ($mailMailer === 'resend' && $resendKey);
+                        $useSmtp = ($mailMailer === 'smtp' || $mailMailer === 'gmail');
+
+                        Log::info('BookingController: Email dispatch decision', [
+                            'MAIL_MAILER_value' => $mailMailer,
+                            'useSendGrid' => $useSendGrid,
+                            'useResend' => $useResend,
+                            'useSmtp' => $useSmtp,
+                        ]);
+
+                        if ($useSendGrid) {
+                            Log::info('BookingController: Using SendGrid branch');
+
+                            $html = View::make('mail.ticket', [
+                                'order' => $order,
+                                'ticket' => $ticket,
+                            ])->render();
+
+                            Log::info('BookingController: View rendered, calling SendGridMailer');
+
+                            SendGridMailer::send(
+                                from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                                to: $order->email,
+                                subject: 'Tiket Anda - Pengempu Waterfall',
+                                html: $html
+                            );
+
+                            Log::info('Ticket email sent via SendGrid', ['to' => $order->email, 'order_id' => $order->order_id]);
+                        } elseif ($useResend) {
                             Log::info('BookingController: Using Resend branch');
 
                             $html = View::make('mail.ticket', [
@@ -310,21 +344,17 @@ public function finish(Request $request, Product $product)
 
                             Log::info('BookingController: View rendered, calling ResendMailer');
 
-                            // TEMPORARY FIX: Resend free account only sends to pengempuw@gmail.com
-                            $recipientEmail = env('APP_ENV') === 'production' ? 'pengempuw@gmail.com' : (string) $order->email;
-
-                            Log::warning('Resend limitation: sending to verified email only', [
-                                'original_recipient' => $order->email,
-                                'actual_recipient' => $recipientEmail,
-                            ]);
-
                             ResendMailer::send(
                                 from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
-                                to: $recipientEmail,
-                                subject: 'Tiket Anda - Pengempu Waterfall (untuk: ' . $order->email . ')',
+                                to: $order->email,
+                                subject: 'Tiket Anda - Pengempu Waterfall',
                                 html: $html
                             );
-                            Log::info('Ticket email sent via Resend', ['to' => $recipientEmail, 'order_id' => $order->order_id]);
+                            Log::info('Ticket email sent via Resend', ['to' => $order->email, 'order_id' => $order->order_id]);
+                        } elseif ($useSmtp) {
+                            Log::info('BookingController: Using SMTP mailer');
+                            Mail::to($order->email)->send(new TicketMail($order, $ticket));
+                            Log::info('Ticket email dispatched via Laravel mailer to: ' . $order->email);
                         } else {
                             Log::info('BookingController: Using Laravel mailer fallback');
                             Mail::to($order->email)->send(new TicketMail($order, $ticket));

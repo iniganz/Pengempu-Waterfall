@@ -1,5 +1,35 @@
 # WORKAROUND: Email Tanpa Domain Mahal
 
+> **Update penting (Railway):** Railway memblok koneksi SMTP (port 587/465), jadi Gmail SMTP **selalu timeout**. Solusi yang stabil adalah **HTTP API mailer**.
+
+## ✅ Solusi Final: SendGrid HTTP API (Free Tier)
+
+**Kenapa SendGrid?**
+- ✅ HTTP API (port 443) → **tidak diblok Railway**
+- ✅ Bisa kirim ke email mana pun
+- ✅ Free tier **100 email/hari** (cukup untuk pariwisata)
+- ✅ Setup cepat (10 menit)
+
+### 1) Buat API Key SendGrid
+1. Daftar: https://signup.sendgrid.com/
+2. Verify email
+3. Dashboard → **Settings → API Keys**
+4. Create API Key → **Full Access**
+5. Copy API key (sekali tampil!)
+
+### 2) Set Railway Variables
+```
+MAIL_MAILER=sendgrid
+SENDGRID_API_KEY=SG.xxxxxxx
+MAIL_FROM_NAME=Admin Waterfall Pengempu
+MAIL_FROM_ADDRESS=pengempuw@gmail.com
+```
+
+### 3) Deploy code
+`SendGridMailer` sudah tersedia dan akan dipakai otomatis saat `MAIL_MAILER=sendgrid`.
+
+---
+
 ## 🎯 BEST SOLUTION: Gmail SMTP + Queue
 
 ### Setup (SIMPLE & GRATIS):

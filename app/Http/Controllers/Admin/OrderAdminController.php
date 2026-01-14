@@ -99,14 +99,23 @@ class OrderAdminController extends Controller
 
                 Log::info('View rendered, calling ResendMailer::send()');
 
+                // TEMPORARY FIX: Resend free account only sends to pengempuw@gmail.com
+                // TODO: Verify domain at resend.com/domains then remove this override
+                $recipientEmail = env('APP_ENV') === 'production' ? 'pengempuw@gmail.com' : (string) $order->email;
+
+                Log::warning('Resend limitation: sending to verified email only', [
+                    'original_recipient' => $order->email,
+                    'actual_recipient' => $recipientEmail,
+                ]);
+
                 $res = ResendMailer::send(
                     from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
-                    to: (string) $order->email,
-                    subject: 'Tiket Resmi - ' . $order->order_id,
+                    to: $recipientEmail,
+                    subject: 'Tiket Resmi - ' . $order->order_id . ' (untuk: ' . $order->email . ')',
                     html: $html
                 );
 
-                Log::info('Admin resend ticket via Resend', ['order_id' => $order->order_id, 'to' => $order->email]);
+                Log::info('Admin resend ticket via Resend', ['order_id' => $order->order_id, 'to' => $recipientEmail]);
                 $resendId = $res['id'] ?? null;
             } else {
                 Log::info('INSIDE Laravel mailer branch (fallback)');

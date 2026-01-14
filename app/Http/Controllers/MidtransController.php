@@ -66,13 +66,21 @@ class MidtransController extends Controller
 
                         Log::info('MidtransController: View rendered, calling ResendMailer');
 
+                        // TEMPORARY FIX: Resend free account only sends to pengempuw@gmail.com
+                        $recipientEmail = env('APP_ENV') === 'production' ? 'pengempuw@gmail.com' : (string) $order->email;
+                        
+                        Log::warning('Resend limitation: sending to verified email only', [
+                            'original_recipient' => $order->email,
+                            'actual_recipient' => $recipientEmail,
+                        ]);
+
                         ResendMailer::send(
                             from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
-                            to: (string) $order->email,
-                            subject: 'Tiket Anda - Pengempu Waterfall',
+                            to: $recipientEmail,
+                            subject: 'Tiket Anda - Pengempu Waterfall (untuk: ' . $order->email . ')',
                             html: $html
                         );
-                        Log::info('Ticket email sent via Resend', ['to' => $order->email, 'order_id' => $order->order_id]);
+                        Log::info('Ticket email sent via Resend', ['to' => $recipientEmail, 'order_id' => $order->order_id]);
                     } else {
                         Log::info('MidtransController: Using Laravel mailer fallback');
                         Mail::to($order->email)->send(new TicketMail($order, $ticket));

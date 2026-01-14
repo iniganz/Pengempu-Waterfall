@@ -22,10 +22,13 @@ use App\Http\Controllers\Admin\GalleryAdminController;
 use App\Http\Controllers\Admin\TestimonialAdminController;
 
 
-Route::get('/storage-link', function () {
-    Artisan::call('storage:link');
-    return 'Storage link successfully';
-});
+// Only expose storage:link locally for safety
+if (app()->environment('local')) {
+    Route::get('/storage-link', function () {
+        Artisan::call('storage:link');
+        return 'Storage link successfully';
+    });
+}
 
 Route::get('/', [PublikController::class, 'index'])->name('home');
 // Route::get('/explore-sekitar', [PublikController::class, 'explore-sekitar'])->name('explore-sekitar');
@@ -42,7 +45,7 @@ Route::get('/products', [ProductController::class, 'index'])->name('products');
 Route::get('/explore-sekitar', [ExploreController::class, 'index'])->name('explore-sekitar');
 Route::get('/explore-sekitar/{slug}', [ExploreController::class, 'show']);
 
-Route::get('/', [TestimonialController::class, 'index'])->name('home');
+// Testimonial landing & form
 Route::post('/testimonial', [TestimonialController::class, 'store'])->name('testimonial.store');
 Route::get('/testimonial', function () {
     return view('publik.page.testimonial');

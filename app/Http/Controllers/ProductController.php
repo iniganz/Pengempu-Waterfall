@@ -28,19 +28,19 @@ class ProductController extends Controller
      */
     public function show($product = null)
     {
-        try {
-            // If a slug is provided (e.g. route('product', ['product' => 'pengempu-waterfall']))
-            // use it; otherwise fall back to the Pengempu Waterfall product
-            $slug = $product ?? 'pengempu-waterfall';
+        // gunakan slug bila ada, fallback ke "pengempu-waterfall"
+        $slug = $product ?? 'pengempu-waterfall';
 
-            $product = Product::with('images', 'category', 'platforms')
-                ->where('slug', $slug)
-                ->firstOrFail();
+        $product = Product::with('images', 'category', 'platforms')
+            ->where('slug', $slug)
+            ->first();
 
-            return view('publik.page.product', compact('product'));
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error loading product: ' . $e->getMessage());
+        if (!$product) {
+            // Jika data belum ada (mis. seeder belum dijalankan), tampilkan 404 jelas
+            abort(404, 'Product tidak ditemukan. Jalankan seeder atau buat produk dengan slug: ' . $slug);
         }
+
+        return view('publik.page.product', compact('product'));
     }
 
 

@@ -20,6 +20,7 @@ use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\Admin\PostAdminController;
 use App\Http\Controllers\Admin\GalleryAdminController;
 use App\Http\Controllers\Admin\TestimonialAdminController;
+use App\Http\Controllers\Admin\SystemHealthController;
 
 
 // Only expose storage:link locally for safety
@@ -125,6 +126,12 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard.orders.show');
     Route::delete('/dashboard/orders/{order}', [OrderAdminController::class, 'destroy'])
         ->name('dashboard.orders.destroy');
+
+    // Health checks (authenticated)
+    Route::get('/dashboard/health/email', [SystemHealthController::class, 'email'])
+        ->name('dashboard.health.email');
+    Route::get('/dashboard/health/storage', [SystemHealthController::class, 'storage'])
+        ->name('dashboard.health.storage');
 });
 
 

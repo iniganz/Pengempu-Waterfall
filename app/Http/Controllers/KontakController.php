@@ -34,10 +34,13 @@ class KontakController extends Controller
             Mail::to('pengempuw@gmail.com')->send(
                 new SendMail($data)
             );
-            
+
             Log::info('Contact email sent successfully from: ' . $data['email']);
 
             return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
+        } catch (\Swift_TransportException $e) {
+            Log::error('SMTP Transport error: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengirim email (SMTP error). Silakan coba lagi.');
         } catch (\Exception $e) {
             Log::error('Contact mail error: ' . $e->getMessage());
             return back()->with('error', 'Maaf, pesan gagal dikirim: ' . $e->getMessage());

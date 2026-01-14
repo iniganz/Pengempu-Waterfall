@@ -1,7 +1,11 @@
 
- <footer id="footer" class="bg-gradient-to-r from-green-900 to-green-500 text-white py-16">
+ <footer id="footer" class="relative">
+    <!-- SVG Waves -->
+    <x-svg-waves class="waves-footer" />
+
     <!-- Main Footer Content -->
-    <div class="max-w-7xl mx-auto px-6 md:px-16 lg:px-24 xl:px-32">
+    <div class="bg-gradient-to-r from-green-900 to-green-500 text-white py-16">
+        <div class="max-w-7xl mx-auto px-6 md:px-16 lg:px-24 xl:px-32">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             <!-- About Section -->
             <div class="col-span-1">

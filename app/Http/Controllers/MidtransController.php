@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Mail\TicketMail;
+use App\Jobs\SendTicketEmail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -41,14 +42,12 @@ class MidtransController extends Controller
 
                 Log::info('Ticket created', ['ticket_code' => $ticket->ticket_code]);
 
-                // Send email asynchronously via queue (prevents timeout)
+                // Dispatch email job to queue
                 try {
-                    Mail::to($order->email)->queue(
-                        new TicketMail($order, $ticket)
-                    );
-                    Log::info('Ticket email queued for: ' . $order->email);
+                    SendTicketEmail::dispatch($order, $ticket);
+                    Log::info('Ticket email job dispatched for: ' . $order->email);
                 } catch (\Exception $e) {
-                    Log::error('Failed to queue ticket email: ' . $e->getMessage());
+                    Log::error('Failed to dispatch ticket email job: ' . $e->getMessage());
                 }
             } else {
                 Log::info('Ticket already exists for order: ' . $order->order_id);

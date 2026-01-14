@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SendMail;
+use App\Jobs\SendContactEmail;
 use Illuminate\Http\Request;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -29,9 +30,9 @@ class KontakController extends Controller
         ]);
 
         try {
-            // Use queue to prevent timeout
-            Mail::to('pengempuw@gmail.com')
-                ->queue(new SendMail($data));
+            // Dispatch email job to queue
+            SendContactEmail::dispatch($data);
+            Log::info('Contact email job dispatched from: ' . $data['email']);
 
             return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
         } catch (\Exception $e) {

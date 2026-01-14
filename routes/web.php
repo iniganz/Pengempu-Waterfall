@@ -126,6 +126,8 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard.orders.show');
     Route::delete('/dashboard/orders/{order}', [OrderAdminController::class, 'destroy'])
         ->name('dashboard.orders.destroy');
+    Route::post('/dashboard/orders/{order}/resend-ticket', [OrderAdminController::class, 'resendTicket'])
+        ->name('dashboard.orders.resendTicket');
 
     // Health checks (authenticated)
     Route::get('/dashboard/health/email', [SystemHealthController::class, 'email'])

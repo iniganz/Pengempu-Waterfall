@@ -64,11 +64,22 @@
             <div class="rounded-lg bg-white p-6 shadow">
                 <div class="mb-4 flex justify-between items-center">
                     <h3 class="text-lg font-semibold">Tiket</h3>
+                    <div class="flex items-center gap-2">
+                        @if ($order->payment_status == 'settlement')
+                            <form method="POST" action="{{ route('dashboard.orders.resendTicket', $order) }}">
+                                @csrf
+                                <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-xs text-white hover:bg-blue-700">
+                                    Kirim Ulang Tiket
+                                </button>
+                            </form>
+                        @endif
+
                     @if($order->ticket)
                         <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded">TERBIT</span>
                     @else
                         <span class="inline-block bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded">BELUM TERBIT</span>
                     @endif
+                    </div>
                 </div>
 
                 @if($order->ticket)

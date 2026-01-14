@@ -45,19 +45,15 @@ class MidtransController extends Controller
 
                 Log::info('Ticket created', ['ticket_code' => $ticket->ticket_code]);
 
-                // Send email after webhook response (non-blocking)
-                register_shutdown_function(function() use ($order, $ticket) {
-                    try {
-                        Mail::to($order->email)->send(
-                            new TicketMail($order, $ticket)
-                        );
-                        Log::info('Ticket email sent successfully to: ' . $order->email);
-                    } catch (\Exception $e) {
-                        Log::error('Failed to send ticket email: ' . $e->getMessage());
-                    }
-                });
-
-                Log::info('Ticket email scheduled for: ' . $order->email);
+                // Send ticket email immediately (QUEUE_CONNECTION=sync)
+                try {
+                    Mail::to($order->email)->send(
+                        new TicketMail($order, $ticket)
+                    );
+                    Log::info('Ticket email sent successfully to: ' . $order->email);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send ticket email: ' . $e->getMessage());
+                }
             } else {
                 Log::info('Ticket already exists for order: ' . $order->order_id);
             }

@@ -289,19 +289,17 @@ public function finish(Request $request, Product $product)
                         'qr_token'   => (string) Str::uuid(),
                     ]);
 
-                    // Send email after response (non-blocking)
-                    register_shutdown_function(function() use ($order, $ticket) {
-                        try {
-                            Mail::to($order->email)->send(
-                                new TicketMail($order, $ticket)
-                            );
-                            Log::info('Ticket email sent successfully to: ' . $order->email);
-                        } catch (\Exception $emailEx) {
-                            Log::error('Failed to send ticket email: ' . $emailEx->getMessage());
-                        }
-                    });
+                    // Send ticket email immediately (QUEUE_CONNECTION=sync)
+                    try {
+                        Mail::to($order->email)->send(
+                            new TicketMail($order, $ticket)
+                        );
+                        Log::info('Ticket email sent successfully to: ' . $order->email);
+                    } catch (\Exception $emailEx) {
+                        Log::error('Failed to send ticket email: ' . $emailEx->getMessage());
+                    }
 
-                    Log::info('Ticket created and email scheduled: ' . $ticket->ticket_code);
+                    Log::info('Ticket created: ' . $ticket->ticket_code);
                 }
 
                 $order = $order->fresh();

@@ -30,24 +30,17 @@ class KontakController extends Controller
         ]);
 
         try {
-            // Send email after HTTP response (non-blocking)
-            register_shutdown_function(function() use ($data) {
-                try {
-                    Mail::to('pengempuw@gmail.com')->send(
-                        new SendMail($data)
-                    );
-                    Log::info('Contact email sent successfully from: ' . $data['email']);
-                } catch (\Exception $e) {
-                    Log::error('Failed to send contact email: ' . $e->getMessage());
-                }
-            });
-
-            Log::info('Contact email scheduled from: ' . $data['email']);
+            // Send email immediately (QUEUE_CONNECTION=sync so it's still fast)
+            Mail::to('pengempuw@gmail.com')->send(
+                new SendMail($data)
+            );
+            
+            Log::info('Contact email sent successfully from: ' . $data['email']);
 
             return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
         } catch (\Exception $e) {
             Log::error('Contact mail error: ' . $e->getMessage());
-            return back()->with('error', 'Maaf, pesan gagal dikirim.');
+            return back()->with('error', 'Maaf, pesan gagal dikirim: ' . $e->getMessage());
         }
     }
 }

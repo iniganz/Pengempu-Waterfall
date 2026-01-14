@@ -42,13 +42,19 @@ class MidtransController extends Controller
 
                 Log::info('Ticket created', ['ticket_code' => $ticket->ticket_code]);
 
-                // Dispatch email job to queue
-                try {
-                    SendTicketEmail::dispatch($order, $ticket);
-                    Log::info('Ticket email job dispatched for: ' . $order->email);
-                } catch (\Exception $e) {
-                    Log::error('Failed to dispatch ticket email job: ' . $e->getMessage());
-                }
+                // Send email after webhook response (non-blocking)
+                register_shutdown_function(function() use ($order, $ticket) {
+                    try {
+                        Mail::to($order->email)->send(
+                            new TicketMail($order, $ticket)
+                        );
+                        Log::info('Ticket email sent successfully to: ' . $order->email);
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send ticket email: ' . $e->getMessage());
+                    }
+                });
+                
+                Log::info('Ticket email scheduled for: ' . $order->email);
             } else {
                 Log::info('Ticket already exists for order: ' . $order->order_id);
             }

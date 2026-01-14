@@ -30,9 +30,19 @@ class KontakController extends Controller
         ]);
 
         try {
-            // Dispatch email job to queue
-            SendContactEmail::dispatch($data);
-            Log::info('Contact email job dispatched from: ' . $data['email']);
+            // Send email after HTTP response (non-blocking)
+            register_shutdown_function(function() use ($data) {
+                try {
+                    Mail::to('pengempuw@gmail.com')->send(
+                        new SendMail($data)
+                    );
+                    Log::info('Contact email sent successfully from: ' . $data['email']);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send contact email: ' . $e->getMessage());
+                }
+            });
+
+            Log::info('Contact email scheduled from: ' . $data['email']);
 
             return back()->with('success', 'Pesan Anda telah dikirim. Terima kasih!');
         } catch (\Exception $e) {

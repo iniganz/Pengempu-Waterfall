@@ -10,12 +10,15 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        User::create([
-            'name' => 'MrSumping',
-            'username' => 'mrsumping',
-            'email' => 'gandhigunadi7@gmail.com',
-            'password' => Hash::make('12345'), // Ganti dengan password yang Anda inginkan
-            // 'is_admin' => true,
-        ]);
+        // Gunakan updateOrCreate untuk menghindari duplicate entry error
+        User::updateOrCreate(
+            ['username' => 'mrsumping'], // kondisi pencarian
+            [
+                'name' => 'MrSumping',
+                'email' => 'gandhigunadi7@gmail.com',
+                'password' => Hash::make('12345'), // Ganti dengan password yang Anda inginkan
+                // 'is_admin' => true,
+            ]
+        );
     }
 }

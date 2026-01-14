@@ -72,10 +72,13 @@ class GalleryAdminController extends Controller
 
     /**
      * Set image as main/primary image
+     *
+     * @param ProductImage $productImage
      */
     public function setMain(ProductImage $productImage)
     {
         try {
+            /** @var Product $product */
             $product = $productImage->product;
             if ($product->slug !== 'pengempu-waterfall') {
                 return back()->with('error', 'Unauthorized action');
@@ -87,7 +90,9 @@ class GalleryAdminController extends Controller
                 return back()->with('error', 'Minimal 2 gambar untuk set main.');
             }
             // Tukar id gambar utama dengan yang dipilih
+            /** @var ProductImage $main */
             $main = $images->first();
+            // @phpstan-ignore-next-line - Model properties from Eloquent
             if ($main->id !== $productImage->id) {
                 // Swap image_url
                 $tmp = $main->image_url;
@@ -107,11 +112,14 @@ class GalleryAdminController extends Controller
 
     /**
      * Delete image
+     *
+     * @param ProductImage $productImage
      */
     public function deleteImage(ProductImage $productImage)
     {
         try {
             // Get product
+            /** @var Product $product */
             $product = $productImage->product;
 
             // Verify it's Pengempu Waterfall product
@@ -127,6 +135,7 @@ class GalleryAdminController extends Controller
             DB::beginTransaction();
 
             // Delete file from storage
+            // @phpstan-ignore-next-line - Model property from Eloquent
             try {
                 if (Storage::disk('public')->exists($productImage->image_url)) {
                     Storage::disk('public')->delete($productImage->image_url);

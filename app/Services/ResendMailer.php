@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Resend;
+use Illuminate\Support\Facades\Log;
 
 class ResendMailer
 {
@@ -16,21 +17,49 @@ class ResendMailer
      */
     public static function send(string $from, string $to, string $subject, string $html): array
     {
+        Log::info('ResendMailer::send() called', [
+            'from' => $from,
+            'to' => $to,
+            'subject' => $subject,
+            'html_length' => strlen($html),
+        ]);
+
         $apiKey = (string) env('RESEND_API_KEY', '');
         if ($apiKey === '') {
+            Log::error('RESEND_API_KEY is not set or empty!');
             throw new \RuntimeException('RESEND_API_KEY is not set');
         }
 
-        $resend = Resend::client($apiKey);
+        Log::debug('Resend API key exists', ['key_prefix' => substr($apiKey, 0, 10)]);
 
-        $response = $resend->emails->send([
-            'from' => $from,
-            'to' => [$to],
-            'subject' => $subject,
-            'html' => $html,
-        ]);
+        try {
+            $resend = Resend::client($apiKey);
 
-        // The SDK returns an array-like response. Cast to array for stable handling.
-        return (array) $response;
+            Log::debug('Resend client initialized, sending email...');
+
+            $response = $resend->emails->send([
+                'from' => $from,
+                'to' => [$to],
+                'subject' => $subject,
+                'html' => $html,
+            ]);
+
+            $result = (array) $response;
+
+            Log::info('Resend API response received', [
+                'id' => $result['id'] ?? 'N/A',
+                'response' => $result,
+            ]);
+
+            return $result;
+        } catch (\Throwable $e) {
+            Log::error('Resend API call failed', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
     }
 }

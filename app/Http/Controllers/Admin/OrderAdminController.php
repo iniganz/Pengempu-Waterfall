@@ -70,7 +70,7 @@ class OrderAdminController extends Controller
                     'qrUrl' => route('ticket.verify', $ticket->qr_token),
                 ])->render();
 
-                ResendMailer::send(
+                $res = ResendMailer::send(
                     from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
                     to: (string) $order->email,
                     subject: 'Tiket Resmi - ' . $order->order_id,
@@ -78,12 +78,19 @@ class OrderAdminController extends Controller
                 );
 
                 Log::info('Admin resend ticket via Resend', ['order_id' => $order->order_id, 'to' => $order->email]);
+                $resendId = $res['id'] ?? null;
             } else {
                 Mail::to($order->email)->send(new TicketMail($order, $ticket));
                 Log::info('Admin resend ticket via Laravel mailer', ['order_id' => $order->order_id, 'to' => $order->email]);
+                $resendId = null;
             }
 
-            return back()->with('success', 'Tiket berhasil dikirim ulang ke email: ' . $order->email);
+            $msg = 'Tiket berhasil diproses untuk dikirim ke email: ' . $order->email;
+            if (!empty($resendId)) {
+                $msg .= ' (Resend id: ' . $resendId . ')';
+            }
+
+            return back()->with('success', $msg);
         } catch (\Throwable $e) {
             Log::error('Admin resend ticket failed', ['order_id' => $order->order_id, 'to' => $order->email, 'error' => $e->getMessage()]);
             return back()->with('error', 'Gagal kirim ulang tiket: ' . $e->getMessage());

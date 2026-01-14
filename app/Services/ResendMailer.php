@@ -14,7 +14,7 @@ class ResendMailer
      * @param string $subject
      * @param string $html
      */
-    public static function send(string $from, string $to, string $subject, string $html): void
+    public static function send(string $from, string $to, string $subject, string $html): array
     {
         $apiKey = (string) env('RESEND_API_KEY', '');
         if ($apiKey === '') {
@@ -23,11 +23,14 @@ class ResendMailer
 
         $resend = Resend::client($apiKey);
 
-        $resend->emails->send([
+        $response = $resend->emails->send([
             'from' => $from,
             'to' => [$to],
             'subject' => $subject,
             'html' => $html,
         ]);
+
+        // The SDK returns an array-like response. Cast to array for stable handling.
+        return (array) $response;
     }
 }

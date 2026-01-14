@@ -31,6 +31,92 @@ if (app()->environment('local')) {
     });
 }
 
+// Email diagnostic route (PRODUCTION DEBUG - REMOVE AFTER FIXING)
+Route::get('/debug-ticket-email', function () {
+    $results = [];
+
+    // 1. Check environment
+    $results['environment'] = [
+        'MAIL_MAILER' => env('MAIL_MAILER', 'NOT SET'),
+        'MAIL_FROM_ADDRESS' => config('mail.from.address', 'NOT SET'),
+        'MAIL_FROM_NAME' => config('mail.from.name', 'NOT SET'),
+        'RESEND_API_KEY_EXISTS' => env('RESEND_API_KEY') ? 'YES (key: ' . substr(env('RESEND_API_KEY'), 0, 10) . '...)' : 'NO',
+    ];
+
+    // 2. Find test order
+    $order = \App\Models\Order::where('payment_status', 'settlement')
+        ->whereNotNull('email')
+        ->with('ticket')
+        ->first();
+
+    if (!$order) {
+        $results['error'] = 'No settlement order found. Pay for a ticket first.';
+        return response()->json($results, 500);
+    }
+
+    $results['order'] = [
+        'id' => $order->id,
+        'order_id' => $order->order_id,
+        'email' => $order->email,
+        'has_ticket' => $order->ticket ? 'YES' : 'NO',
+    ];
+
+    // 3. Create ticket if not exists
+    if (!$order->ticket) {
+        $ticket = \App\Models\Ticket::create([
+            'order_id' => $order->id,
+            'ticket_code' => 'TKT-' . strtoupper(Str::random(8)),
+            'qr_token' => (string) Str::uuid(),
+        ]);
+        $results['ticket_created'] = $ticket->ticket_code;
+    } else {
+        $ticket = $order->ticket;
+        $results['ticket_code'] = $ticket->ticket_code;
+    }
+
+    // 4. Render email view
+    try {
+        $html = View::make('mail.ticket', [
+            'order' => $order,
+            'ticket' => $ticket,
+            'qrUrl' => route('ticket.verify', $ticket->qr_token),
+        ])->render();
+
+        $results['view_rendered'] = 'YES (' . strlen($html) . ' chars)';
+    } catch (\Throwable $e) {
+        $results['view_error'] = $e->getMessage();
+        return response()->json($results, 500);
+    }
+
+    // 5. Send via Resend
+    try {
+        if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+            $response = \App\Services\ResendMailer::send(
+                from: sprintf('%s <%s>', config('mail.from.name', 'Admin'), config('mail.from.address', 'onboarding@resend.dev')),
+                to: $order->email,
+                subject: 'DEBUG TEST - Tiket Resmi - ' . $order->order_id,
+                html: $html
+            );
+
+            $results['resend_response'] = $response;
+            $results['success'] = true;
+            $results['message'] = 'Email sent successfully! Check inbox: ' . $order->email;
+        } else {
+            $results['error'] = 'Resend not configured (env check failed)';
+            return response()->json($results, 500);
+        }
+    } catch (\Throwable $e) {
+        $results['send_error'] = [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ];
+        return response()->json($results, 500);
+    }
+
+    return response()->json($results, 200);
+})->middleware('auth');
+
 Route::get('/', [PublikController::class, 'index'])->name('home');
 // Route::get('/explore-sekitar', [PublikController::class, 'explore-sekitar'])->name('explore-sekitar');
 Route::get('/contact', [PublikController::class, 'contact'])->name('contact');

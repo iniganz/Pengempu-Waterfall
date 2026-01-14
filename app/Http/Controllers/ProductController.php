@@ -39,6 +39,11 @@ class ProductController extends Controller
         }
     }
 
+public function shows()
+    {
+        return view('publik.page.product', compact('product'));
+       
+    }
 
 
 

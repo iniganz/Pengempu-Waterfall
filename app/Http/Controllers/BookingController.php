@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Midtrans\Snap;
+use Midtrans\Config;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\Product;
@@ -14,7 +15,6 @@ use Illuminate\Http\Request;
 use App\Jobs\SendTicketEmail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Container\Attributes\Config;
 
 class BookingController extends Controller
 {

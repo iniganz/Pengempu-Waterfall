@@ -14,24 +14,28 @@ class ProductSeeder extends Seeder
     public function run()
     {
         // 0. Pengempu Waterfall (Main Product)
-        $product = Product::create([
-            'title' => 'Pengempu Waterfall',
-            'slug' => 'pengempu-waterfall',
-            'category_id' => 1,
-            'image' => 'waterfall.jpg',
-            'description' => "Pengempu Waterfall adalah destinasi wisata alam yang menakjubkan dengan air terjun spektakuler yang tersembunyi di tengah hutan tropis. Pengalaman petualangan yang memikat dengan pemandangan alam yang indah, air yang jernih dan segar, serta ketenangan alami yang sempurna untuk relaksasi dan petualangan.",
-            'feature' => "Natural Beauty, Adventure Ready, Photography Paradise, Clear Fresh Water, Peaceful Environment",
-            'date' => '2025-01-01',
-            'platform' => 'Destination',
-            'additional_info' => "<p><strong>Lokasi:</strong> Tersembunyi di tengah hutan tropis</p><p><strong>Fitur Utama:</strong><br><ul><li>Air terjun setinggi puluhan meter</li><li>Kolam air jernih yang sempurna untuk berenang</li><li>Pemandangan alam yang memukau</li><li>Udara segar dan tenang</li><li>Ideal untuk fotografi dan petualangan</li></ul></p><p><strong>Aktivitas yang Tersedia:</strong><br><ul><li>Hiking dan trekking</li><li>Berenang di kolam alami</li><li>Fotografi alam</li><li>Piknik</li><li>Menjelajahi area sekitar</li></ul></p>",
-        ]);
+        $product = Product::updateOrCreate(
+            ['slug' => 'pengempu-waterfall'],
+            [
+                'title' => 'Pengempu Waterfall',
+                'category_id' => 1,
+                'image' => 'waterfall.jpg',
+                'description' => "Pengempu Waterfall adalah destinasi wisata alam yang menakjubkan dengan air terjun spektakuler yang tersembunyi di tengah hutan tropis. Pengalaman petualangan yang memikat dengan pemandangan alam yang indah, air yang jernih dan segar, serta ketenangan alami yang sempurna untuk relaksasi dan petualangan.",
+                'feature' => "Natural Beauty, Adventure Ready, Photography Paradise, Clear Fresh Water, Peaceful Environment",
+                'date' => '2025-01-01',
+                'platform' => 'Destination',
+                'additional_info' => "<p><strong>Lokasi:</strong> Tersembunyi di tengah hutan tropis</p><p><strong>Fitur Utama:</strong><br><ul><li>Air terjun setinggi puluhan meter</li><li>Kolam air jernih yang sempurna untuk berenang</li><li>Pemandangan alam yang memukau</li><li>Udara segar dan tenang</li><li>Ideal untuk fotografi dan petualangan</li></ul></p><p><strong>Aktivitas yang Tersedia:</strong><br><ul><li>Hiking dan trekking</li><li>Berenang di kolam alami</li><li>Fotografi alam</li><li>Piknik</li><li>Menjelajahi area sekitar</li></ul></p>",
+            ]
+        );
 
-        // Add sample images for Pengempu Waterfall
-        foreach (['waterfall1.jpg', 'waterfall2.jpg', 'waterfall3.jpg', 'waterfall4.jpg'] as $img) {
-            ProductImage::create([
-                'product_id' => $product->id,
-                'image_url' => $img
-            ]);
+        // Add sample images for Pengempu Waterfall (hanya jika belum ada)
+        if ($product->images()->count() === 0) {
+            foreach (['waterfall1.jpg', 'waterfall2.jpg', 'waterfall3.jpg', 'waterfall4.jpg'] as $img) {
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url' => $img
+                ]);
+            }
         }
 
         // 1. Sea Of Thieves

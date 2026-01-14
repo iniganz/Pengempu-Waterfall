@@ -31,8 +31,12 @@ class PlatformSeeder extends Seeder
             ['name' => 'Uplay', 'slug' => 'uplay'],
             ['name' => 'Battle.net', 'slug' => 'battle-net'],
         ];
+
         foreach ($platforms as $p) {
-            Platform::create($p);
+            Platform::updateOrCreate(
+                ['slug' => $p['slug']], // kondisi pencarian
+                $p // data untuk update atau create
+            );
         }
     }
 }

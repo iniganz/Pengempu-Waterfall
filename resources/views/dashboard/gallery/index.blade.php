@@ -9,7 +9,7 @@
 
     <div class="py-12">
         <div class="mx-auto max-w-6xl sm:px-6 lg:px-8">
-            
+
             @if(app()->environment('production') && config('filesystems.default') === 'local')
             <!-- Warning for Production -->
             <div class="mb-6 rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">

@@ -77,25 +77,29 @@ class OrderAdminController extends Controller
             $mailMailer = env('MAIL_MAILER');
             $resendKey = env('RESEND_API_KEY');
 
-            $conditionResult = (($mailMailer === 'resend') || $resendKey) ? 'WILL_USE_RESEND' : 'WILL_USE_LARAVEL_MAILER';
+            // Determine which email service to use
+            $useSmtp = ($mailMailer === 'smtp' || $mailMailer === 'gmail');
+            $useResend = ($mailMailer === 'resend' && $resendKey);
+
+            $conditionResult = $useSmtp ? 'WILL_USE_GMAIL_SMTP' : ($useResend ? 'WILL_USE_RESEND' : 'WILL_USE_DEFAULT_MAILER');
             error_log('[OrderAdmin] Conditional check: ' . $conditionResult);
 
             Log::info('Conditional check', [
                 'MAIL_MAILER_value' => $mailMailer,
-                'MAIL_MAILER_is_resend' => ($mailMailer === 'resend'),
-                'RESEND_API_KEY_truthy' => $resendKey ? 'TRUE' : 'FALSE',
+                'useSmtp' => $useSmtp,
+                'useResend' => $useResend,
                 'condition_result' => $conditionResult,
             ]);
 
             // Send email based on mailer config
-            if ($mailMailer === 'smtp' || $mailMailer === 'gmail') {
+            if ($useSmtp) {
                 Log::info('Using Gmail SMTP (sync mode)');
 
                 Mail::to($order->email)->send(new TicketMail($order, $ticket));
 
                 Log::info('Admin resend ticket sent via Gmail SMTP', ['order_id' => $order->order_id, 'to' => $order->email]);
                 $resendId = null;
-            } elseif ($mailMailer === 'resend' || $resendKey) {
+            } elseif ($useResend) {
                 error_log('[OrderAdmin] INSIDE Resend branch - about to render view');
                 Log::info('INSIDE Resend branch - about to render view');
 

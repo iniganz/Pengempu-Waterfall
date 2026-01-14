@@ -60,15 +60,38 @@ class OrderAdminController extends Controller
                     'qr_token' => (string) Str::uuid(),
                 ]);
                 $order->setRelation('ticket', $ticket);
+                Log::info('Ticket created in resendTicket', ['ticket_code' => $ticket->ticket_code]);
             }
 
+            // DEBUG: Log environment variables
+            Log::info('BEFORE email send - checking environment', [
+                'MAIL_MAILER' => env('MAIL_MAILER'),
+                'RESEND_API_KEY_exists' => env('RESEND_API_KEY') ? 'YES' : 'NO',
+                'config_mail_from' => config('mail.from.address'),
+                'order_email' => $order->email,
+            ]);
+
             // Send using the same design (TicketMail / mail.ticket), only transport differs.
-            if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+            $mailMailer = env('MAIL_MAILER');
+            $resendKey = env('RESEND_API_KEY');
+
+            Log::info('Conditional check', [
+                'MAIL_MAILER_value' => $mailMailer,
+                'MAIL_MAILER_is_resend' => ($mailMailer === 'resend'),
+                'RESEND_API_KEY_truthy' => $resendKey ? 'TRUE' : 'FALSE',
+                'condition_result' => (($mailMailer === 'resend') || $resendKey) ? 'WILL_USE_RESEND' : 'WILL_USE_LARAVEL_MAILER',
+            ]);
+
+            if ($mailMailer === 'resend' || $resendKey) {
+                Log::info('INSIDE Resend branch - about to render view');
+
                 $html = View::make('mail.ticket', [
                     'order' => $order,
                     'ticket' => $ticket,
                     'qrUrl' => route('ticket.verify', $ticket->qr_token),
                 ])->render();
+
+                Log::info('View rendered, calling ResendMailer::send()');
 
                 $res = ResendMailer::send(
                     from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
@@ -80,6 +103,7 @@ class OrderAdminController extends Controller
                 Log::info('Admin resend ticket via Resend', ['order_id' => $order->order_id, 'to' => $order->email]);
                 $resendId = $res['id'] ?? null;
             } else {
+                Log::info('INSIDE Laravel mailer branch (fallback)');
                 Mail::to($order->email)->send(new TicketMail($order, $ticket));
                 Log::info('Admin resend ticket via Laravel mailer', ['order_id' => $order->order_id, 'to' => $order->email]);
                 $resendId = null;

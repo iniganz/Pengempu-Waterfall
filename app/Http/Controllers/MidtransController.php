@@ -49,11 +49,22 @@ class MidtransController extends Controller
 
                 // Send ticket email (prefer Resend API in production)
                 try {
+                    Log::info('MidtransController: About to send ticket email', [
+                        'order_id' => $order->order_id,
+                        'email' => $order->email,
+                        'MAIL_MAILER' => env('MAIL_MAILER'),
+                        'RESEND_API_KEY_exists' => env('RESEND_API_KEY') ? 'YES' : 'NO',
+                    ]);
+
                     if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+                        Log::info('MidtransController: Using Resend branch');
+
                         $html = View::make('mail.ticket', [
                             'order' => $order,
                             'ticket' => $ticket,
                         ])->render();
+
+                        Log::info('MidtransController: View rendered, calling ResendMailer');
 
                         ResendMailer::send(
                             from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
@@ -63,6 +74,7 @@ class MidtransController extends Controller
                         );
                         Log::info('Ticket email sent via Resend', ['to' => $order->email, 'order_id' => $order->order_id]);
                     } else {
+                        Log::info('MidtransController: Using Laravel mailer fallback');
                         Mail::to($order->email)->send(new TicketMail($order, $ticket));
                         Log::info('Ticket email dispatched via Laravel mailer to: ' . $order->email);
                     }

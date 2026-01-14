@@ -33,10 +33,13 @@ class SendTicketEmail implements ShouldQueue
     public function handle(): void
     {
         try {
-            Mail::to($this->order->email)->send(
-                new TicketMail($this->order, $this->ticket)
+            /** @var Order $order */
+            $order = $this->order;
+
+            Mail::to($order->email)->send(
+                new TicketMail($order, $this->ticket)
             );
-            Log::info('Ticket email sent successfully to: ' . $this->order->email);
+            Log::info('Ticket email sent successfully to: ' . $order->email);
         } catch (\Exception $e) {
             Log::error('Failed to send ticket email: ' . $e->getMessage());
             throw $e; // Rethrow untuk retry

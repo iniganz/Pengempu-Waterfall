@@ -91,6 +91,7 @@ class BookingController extends Controller
         $grossAmount = $price * $data['qty'];
 
         // Midtrans config (server only)
+        // @phpstan-ignore-next-line - Midtrans Config static properties
         Config::$serverKey = config('services.midtrans.server_key');
         Config::$isProduction = config('services.midtrans.is_production');
         Config::$isSanitized = config('services.midtrans.is_sanitized');

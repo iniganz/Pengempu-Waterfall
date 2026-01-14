@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Mail\TicketMail;
-use App\Jobs\SendTicketEmail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -15,19 +14,23 @@ class MidtransController extends Controller
 {
     public function handle(Request $request)
     {
+        // Get Midtrans webhook data
+        $orderId = $request->input('order_id');
+        $transactionStatus = $request->input('transaction_status');
+
         Log::info('Midtrans webhook received', [
-            'order_id' => $request->order_id,
-            'transaction_status' => $request->transaction_status,
+            'order_id' => $orderId,
+            'transaction_status' => $transactionStatus,
         ]);
 
-        $order = Order::where('order_id', $request->order_id)->first();
+        $order = Order::where('order_id', $orderId)->first();
 
         if (!$order) {
-            Log::error('Order not found for webhook', ['order_id' => $request->order_id]);
+            Log::error('Order not found for webhook', ['order_id' => $orderId]);
             return response()->json(['error' => 'Order not found'], 404);
         }
 
-        if ($request->transaction_status === 'settlement') {
+        if ($transactionStatus === 'settlement') {
             Log::info('Processing settlement for order: ' . $order->order_id);
 
             $order->update(['payment_status' => 'settlement']);
@@ -53,7 +56,7 @@ class MidtransController extends Controller
                         Log::error('Failed to send ticket email: ' . $e->getMessage());
                     }
                 });
-                
+
                 Log::info('Ticket email scheduled for: ' . $order->email);
             } else {
                 Log::info('Ticket already exists for order: ' . $order->order_id);

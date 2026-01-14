@@ -2,27 +2,40 @@
 
 ## 🚨 ROOT CAUSE FOUND
 
-**Error Message:**
+**Error Messages Encountered:**
+
+1. **Recipient Validation Error:**
 ```
 You can only send testing emails to your own email address (pengempuw@gmail.com). 
 To send emails to other recipients, please verify a domain at resend.com/domains, 
 and change the `from` address to an email using this domain.
 ```
 
+2. **Sender Domain Error:**
+```
+The gmail.com domain is not verified. Please, add and verify your domain on https://resend.com/domains
+```
+
 **Problem:**
 Resend **FREE account** has strict limitations:
 - ✅ Can send TO: Your verified email only (`pengempuw@gmail.com`)
-- ✅ Can send FROM: `onboarding@resend.dev` (Resend default domain)
+- ✅ Can send FROM: `onboarding@resend.dev` (Resend default domain) **ONLY**
 - ❌ CANNOT send TO: Customer emails (random addresses)
-- ❌ CANNOT send FROM: Your own domain (until verified)
+- ❌ CANNOT send FROM: `@gmail.com` or any unverified domain
 
 **Why Contact Form Works but Ticket Doesn't:**
 - Contact form sends TO: `pengempuw@gmail.com` ✅ (your verified email)
 - Ticket email sends TO: `gandhigunadi7@gmail.com` ❌ (customer email, not verified)
 
+**Why FROM Address Failed:**
+- Was set to: `MAIL_FROM_ADDRESS=pengempuw@gmail.com` ❌ (gmail.com not verified)
+- Must be: `MAIL_FROM_ADDRESS=onboarding@resend.dev` ✅ (Resend default)
+
 ---
 
-## ✅ TEMPORARY FIX APPLIED
+## ✅ FIXES APPLIED
+
+### **Fix #1: Recipient Override (Temporary)**
 
 **File Changes:**
 - `app/Http/Controllers/Admin/OrderAdminController.php`
@@ -48,6 +61,22 @@ ResendMailer::send(
     subject: 'Tiket Resmi - ' . $order->order_id . ' (untuk: ' . $order->email . ')',  // ← Shows real recipient in subject
     html: $html
 );
+```
+
+### **Fix #2: Sender Address Correction**
+
+**Railway Variable Changed:**
+```bash
+# BEFORE (WRONG):
+MAIL_FROM_ADDRESS=pengempuw@gmail.com  ❌ gmail.com not verified
+
+# AFTER (CORRECT):
+MAIL_FROM_ADDRESS=onboarding@resend.dev  ✅ Resend default domain
+```
+
+**Command Used:**
+```bash
+railway variables --set MAIL_FROM_ADDRESS=onboarding@resend.dev
 ```
 
 **Effect:**

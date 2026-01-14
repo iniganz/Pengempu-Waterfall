@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\Product;
 use App\Mail\TicketMail;
+use App\Jobs\SendTicketEmail;
 use Midtrans\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -285,10 +286,13 @@ public function finish(Request $request, Product $product)
                         'qr_token'   => (string) Str::uuid(),
                     ]);
 
-                    // Kirim email tiket
-                    Mail::to($order->email)->send(
-                        new TicketMail($order, $ticket)
-                    );
+                    // Dispatch email job (non-blocking)
+                    try {
+                        SendTicketEmail::dispatch($order, $ticket);
+                        Log::info('Ticket email job dispatched for: ' . $order->email);
+                    } catch (\Exception $emailEx) {
+                        Log::error('Failed to dispatch ticket email job: ' . $emailEx->getMessage());
+                    }
                 }
 
                 $order = $order->fresh();

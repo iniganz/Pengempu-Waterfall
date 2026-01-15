@@ -52,19 +52,24 @@
                                     @php
                                         $viewUrl = null;
                                         $hasImage = false;
-                                        if ($post->image_data) {
+                                        $isBase64 = false;
+                                        if ($post->image_data && str_starts_with($post->image_data, 'data:image')) {
                                             $viewUrl = $post->image_data;
                                             $hasImage = true;
+                                            $isBase64 = true;
                                         } elseif (filter_var($post->image_path, FILTER_VALIDATE_URL)) {
                                             $viewUrl = $post->image_path;
                                             $hasImage = true;
                                         }
-                                        // Don't use storage path - files don't persist on Railway
                                     @endphp
                                     @if($hasImage)
-                                        <a href="{{ $viewUrl }}" target="_blank" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</a>
+                                        @if($isBase64)
+                                            <button type="button" onclick="showImageModal('{{ $post->id }}')" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</button>
+                                        @else
+                                            <a href="{{ $viewUrl }}" target="_blank" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</a>
+                                        @endif
                                     @else
-                                        <span class="rounded bg-gray-400 px-3 py-1 text-xs text-white cursor-not-allowed" title="Gambar tidak tersedia (data lama)">No Image</span>
+                                        <span class="rounded bg-gray-400 px-3 py-1 text-xs text-white cursor-not-allowed" title="Gambar tidak tersedia">No Image</span>
                                     @endif
                                     {{-- Approve --}}
                                     @if($post->status == 'pending')
@@ -97,4 +102,43 @@
             </div>
         </div>
     </div>
+
+    {{-- Image Modal --}}
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50" onclick="hideImageModal()">
+        <div class="relative max-w-4xl max-h-[90vh] p-4">
+            <button onclick="hideImageModal()" class="absolute top-0 right-0 m-4 text-white text-3xl font-bold hover:text-gray-300">&times;</button>
+            <img id="modalImage" src="" alt="Gallery Image" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-lg">
+        </div>
+    </div>
+
+    {{-- Hidden image data storage --}}
+    @foreach ($posts as $post)
+        @if($post->image_data && str_starts_with($post->image_data, 'data:image'))
+            <input type="hidden" id="image-data-{{ $post->id }}" value="{{ $post->image_data }}">
+        @endif
+    @endforeach
+
+    <script>
+        function showImageModal(postId) {
+            const imageData = document.getElementById('image-data-' + postId);
+            if (imageData) {
+                document.getElementById('modalImage').src = imageData.value;
+                document.getElementById('imageModal').classList.remove('hidden');
+                document.getElementById('imageModal').classList.add('flex');
+            }
+        }
+
+        function hideImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('imageModal').classList.remove('flex');
+            document.getElementById('modalImage').src = '';
+        }
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideImageModal();
+            }
+        });
+    </script>
 </x-app-layout>

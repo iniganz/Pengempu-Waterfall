@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class GalleryAdminController extends Controller
 {
@@ -46,7 +47,25 @@ class GalleryAdminController extends Controller
 
             // Store image
             try {
-                $path = $request->file('image')->store('products', 'public');
+                // Upload ke Cloudinary jika dikonfigurasi
+                if (env('CLOUDINARY_URL') || env('CLOUDINARY_CLOUD_NAME')) {
+                    Log::info('Uploading product image to Cloudinary...');
+                    
+                    $uploadedFile = Cloudinary::upload($request->file('image')->getRealPath(), [
+                        'folder' => 'pengempu-products',
+                        'transformation' => [
+                            'quality' => 'auto',
+                            'fetch_format' => 'auto',
+                        ]
+                    ]);
+                    
+                    $path = $uploadedFile->getSecurePath(); // Full HTTPS URL
+                    Log::info('Cloudinary upload success: ' . $path);
+                } else {
+                    // Fallback ke local storage
+                    $path = $request->file('image')->store('products', 'public');
+                    Log::info('File stored locally at: ' . $path);
+                }
 
                 ProductImage::create([
                     'product_id' => $product->id,

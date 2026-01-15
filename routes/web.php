@@ -32,6 +32,15 @@ if (app()->environment('local')) {
     });
 }
 
+// Clear all caches (temp route for Railway)
+Route::get('/clear-all-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    return 'All caches cleared: cache, config, view, route';
+});
+
 // Email diagnostic route (PRODUCTION DEBUG - REMOVE AFTER FIXING)
 Route::get('/debug-ticket-email', function () {
     $results = [];

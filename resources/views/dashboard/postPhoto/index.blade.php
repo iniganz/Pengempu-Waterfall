@@ -50,15 +50,22 @@
                                 <td class="flex flex-wrap gap-2 py-2 justify-center">
                                     {{-- View Full Image --}}
                                     @php
+                                        $viewUrl = null;
+                                        $hasImage = false;
                                         if ($post->image_data) {
                                             $viewUrl = $post->image_data;
+                                            $hasImage = true;
                                         } elseif (filter_var($post->image_path, FILTER_VALIDATE_URL)) {
                                             $viewUrl = $post->image_path;
-                                        } else {
-                                            $viewUrl = asset('storage/' . $post->image_path);
+                                            $hasImage = true;
                                         }
+                                        // Don't use storage path - files don't persist on Railway
                                     @endphp
-                                    <a href="{{ $viewUrl }}" target="_blank" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</a>
+                                    @if($hasImage)
+                                        <a href="{{ $viewUrl }}" target="_blank" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</a>
+                                    @else
+                                        <span class="rounded bg-gray-400 px-3 py-1 text-xs text-white cursor-not-allowed" title="Gambar tidak tersedia (data lama)">No Image</span>
+                                    @endif
                                     {{-- Approve --}}
                                     @if($post->status == 'pending')
                                     <form method="POST" action="{{ route('dashboard.post.approve', $post->id) }}">

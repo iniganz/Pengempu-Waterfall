@@ -50,7 +50,7 @@ class GalleryAdminController extends Controller
                 // Upload ke Cloudinary jika dikonfigurasi
                 if (env('CLOUDINARY_URL') || env('CLOUDINARY_CLOUD_NAME')) {
                     Log::info('Uploading product image to Cloudinary...');
-                    
+
                     $uploadedFile = Cloudinary::upload($request->file('image')->getRealPath(), [
                         'folder' => 'pengempu-products',
                         'transformation' => [
@@ -58,7 +58,7 @@ class GalleryAdminController extends Controller
                             'fetch_format' => 'auto',
                         ]
                     ]);
-                    
+
                     $path = $uploadedFile->getSecurePath(); // Full HTTPS URL
                     Log::info('Cloudinary upload success: ' . $path);
                 } else {

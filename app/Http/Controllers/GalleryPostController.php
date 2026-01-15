@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\GalleryPost;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class GalleryPostController extends Controller
 {
@@ -34,31 +33,20 @@ class GalleryPostController extends Controller
 
             Log::info('Validation passed');
 
-            // Upload ke Cloudinary jika dikonfigurasi, otherwise local storage
-            if (env('CLOUDINARY_URL') || env('CLOUDINARY_CLOUD_NAME')) {
-                Log::info('Uploading to Cloudinary...');
+            // Simpan gambar sebagai base64 di database
+            $file = $request->file('image');
+            $imageData = base64_encode(file_get_contents($file->getRealPath()));
+            $mimeType = $file->getMimeType();
+            $base64Image = 'data:' . $mimeType . ';base64,' . $imageData;
 
-                $uploadedFile = Cloudinary::upload($request->file('image')->getRealPath(), [
-                    'folder' => 'pengempu-gallery',
-                    'transformation' => [
-                        'quality' => 'auto',
-                        'fetch_format' => 'auto',
-                    ]
-                ]);
-
-                $path = $uploadedFile->getSecurePath(); // Full HTTPS URL
-                Log::info('Cloudinary upload success: ' . $path);
-            } else {
-                // Fallback ke local storage
-                $path = $request->file('image')->store('gallery_posts', 'public');
-                Log::info('File stored locally at: ' . $path);
-            }
+            Log::info('Image converted to base64, size: ' . strlen($base64Image) . ' bytes');
 
             // Simpan ke database
             $post = GalleryPost::create([
                 'name' => $validated['name'],
                 'caption' => $validated['caption'] ?? null,
-                'image_path' => $path,
+                'image_path' => 'database', // marker bahwa gambar di database
+                'image_data' => $base64Image,
                 'status' => 'pending',
             ]);
 

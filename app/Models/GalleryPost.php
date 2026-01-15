@@ -13,6 +13,7 @@ class GalleryPost extends Model
         'name',
         'caption',
         'image_path',
+        'image_data',
         'status',
     ];
 }

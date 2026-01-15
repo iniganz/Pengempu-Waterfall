@@ -63,13 +63,17 @@
                 <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
                     @forelse($galleryPosts as $post)
                         @php
-                            // Handle both Cloudinary URLs (https://...) and local storage paths
-                            $imageUrl = filter_var($post->image_path, FILTER_VALIDATE_URL)
-                                ? $post->image_path
-                                : asset('storage/' . $post->image_path);
+                            // Handle: base64 from database, full URL, or local storage
+                            if ($post->image_data) {
+                                $imageUrl = $post->image_data; // base64 data URL
+                            } elseif (filter_var($post->image_path, FILTER_VALIDATE_URL)) {
+                                $imageUrl = $post->image_path; // Cloudinary or external URL
+                            } else {
+                                $imageUrl = asset('storage/' . $post->image_path); // local storage
+                            }
                         @endphp
                         <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-gallery">
-                            <img src="{{ $imageUrl }}" class="img-fluid"
+                            <img src="{{ $imageUrl }}" class="img-fluid" loading="lazy"
                                 alt="{{ $post->caption ?? $post->name }}">
                             <div class="portfolio-info">
                                 <h4>{{ $post->name }}</h4>

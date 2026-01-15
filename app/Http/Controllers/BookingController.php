@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use App\Services\ResendMailer;
 use App\Services\SendGridMailer;
+use App\Services\BrevoMailer;
 use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
@@ -305,18 +306,37 @@ public function finish(Request $request, Product $product)
                         $mailMailer = env('MAIL_MAILER');
                         $resendKey = env('RESEND_API_KEY');
                         $sendGridKey = env('SENDGRID_API_KEY');
+                        $brevoKey = env('BREVO_API_KEY');
+                        $useBrevo = ($mailMailer === 'brevo' && $brevoKey);
                         $useSendGrid = ($mailMailer === 'sendgrid' && $sendGridKey);
                         $useResend = ($mailMailer === 'resend' && $resendKey);
                         $useSmtp = ($mailMailer === 'smtp' || $mailMailer === 'gmail');
 
                         Log::info('BookingController: Email dispatch decision', [
                             'MAIL_MAILER_value' => $mailMailer,
+                            'useBrevo' => $useBrevo,
                             'useSendGrid' => $useSendGrid,
                             'useResend' => $useResend,
                             'useSmtp' => $useSmtp,
                         ]);
 
-                        if ($useSendGrid) {
+                        if ($useBrevo) {
+                            Log::info('BookingController: Using Brevo branch');
+
+                            $html = View::make('mail.ticket', [
+                                'order' => $order,
+                                'ticket' => $ticket,
+                            ])->render();
+
+                            BrevoMailer::send(
+                                from: sprintf('%s <%s>', (string) config('mail.from.name', 'Pengempu Waterfall'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                                to: $order->email,
+                                subject: 'Tiket Anda - Pengempu Waterfall',
+                                html: $html
+                            );
+
+                            Log::info('Ticket email sent via Brevo', ['to' => $order->email, 'order_id' => $order->order_id]);
+                        } elseif ($useSendGrid) {
                             Log::info('BookingController: Using SendGrid branch');
 
                             $html = View::make('mail.ticket', [

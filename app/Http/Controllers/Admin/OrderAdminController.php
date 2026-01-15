@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use App\Services\ResendMailer;
 use App\Services\SendGridMailer;
+use App\Services\BrevoMailer;
 
 class OrderAdminController extends Controller
 {
@@ -78,19 +79,24 @@ class OrderAdminController extends Controller
             $mailMailer = env('MAIL_MAILER');
             $resendKey = env('RESEND_API_KEY');
             $sendGridKey = env('SENDGRID_API_KEY');
+            $brevoKey = env('BREVO_API_KEY');
 
             // Determine which email service to use
             $useSmtp = ($mailMailer === 'smtp' || $mailMailer === 'gmail');
             $useResend = ($mailMailer === 'resend' && $resendKey);
             $useSendGrid = ($mailMailer === 'sendgrid' && $sendGridKey);
+            $useBrevo = ($mailMailer === 'brevo' && $brevoKey);
 
-            $conditionResult = $useSendGrid
-                ? 'WILL_USE_SENDGRID'
-                : ($useSmtp ? 'WILL_USE_GMAIL_SMTP' : ($useResend ? 'WILL_USE_RESEND' : 'WILL_USE_DEFAULT_MAILER'));
+            $conditionResult = $useBrevo
+                ? 'WILL_USE_BREVO'
+                : ($useSendGrid
+                    ? 'WILL_USE_SENDGRID'
+                    : ($useSmtp ? 'WILL_USE_GMAIL_SMTP' : ($useResend ? 'WILL_USE_RESEND' : 'WILL_USE_DEFAULT_MAILER')));
             error_log('[OrderAdmin] Conditional check: ' . $conditionResult);
 
             Log::info('Conditional check', [
                 'MAIL_MAILER_value' => $mailMailer,
+                'useBrevo' => $useBrevo,
                 'useSendGrid' => $useSendGrid,
                 'useSmtp' => $useSmtp,
                 'useResend' => $useResend,
@@ -98,7 +104,25 @@ class OrderAdminController extends Controller
             ]);
 
             // Send email based on mailer config
-            if ($useSendGrid) {
+            if ($useBrevo) {
+                Log::info('Using Brevo API');
+
+                $html = View::make('mail.ticket', [
+                    'order' => $order,
+                    'ticket' => $ticket,
+                    'qrUrl' => route('ticket.verify', $ticket->qr_token),
+                ])->render();
+
+                BrevoMailer::send(
+                    from: sprintf('%s <%s>', (string) config('mail.from.name', 'Pengempu Waterfall'), (string) config('mail.from.address', 'pengempuw@gmail.com')),
+                    to: $order->email,
+                    subject: 'Tiket Resmi - ' . $order->order_id,
+                    html: $html
+                );
+
+                Log::info('Admin resend ticket sent via Brevo', ['order_id' => $order->order_id, 'to' => $order->email]);
+                $resendId = null;
+            } elseif ($useSendGrid) {
                 Log::info('Using SendGrid API');
 
                 $html = View::make('mail.ticket', [

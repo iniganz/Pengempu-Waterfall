@@ -66,7 +66,7 @@
                         <h3>Ways You Can pay</h3>
                         <img src="/images/payment-method.png" alt="Payment Methods" class="img-payment-about">
                         <h1>PENGEMPU WATERFALL</h1>
-                        <p>Link web ni</p>
+                        <p>https://pengempu-waterfall-production.up.railway.app/</p>
                         <h3>Nikmati Ketenangan Alam Bali dari Sisi yang Berbeda bersama Pengempu Waterfall</h3>
 
                         <!-- Desktop Description (Panjang) -->

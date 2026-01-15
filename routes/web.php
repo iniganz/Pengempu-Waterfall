@@ -41,6 +41,24 @@ Route::get('/clear-all-cache', function () {
     return 'All caches cleared: cache, config, view, route';
 });
 
+// Debug gallery posts data
+Route::get('/debug-gallery-posts', function () {
+    $posts = \App\Models\GalleryPost::latest()->take(10)->get();
+    $result = [];
+    foreach ($posts as $post) {
+        $result[] = [
+            'id' => $post->id,
+            'name' => $post->name,
+            'image_path' => $post->image_path,
+            'image_data_exists' => !empty($post->image_data),
+            'image_data_length' => $post->image_data ? strlen($post->image_data) : 0,
+            'image_data_starts_with' => $post->image_data ? substr($post->image_data, 0, 50) : null,
+            'status' => $post->status,
+        ];
+    }
+    return response()->json($result, 200, [], JSON_PRETTY_PRINT);
+});
+
 // Email diagnostic route (PRODUCTION DEBUG - REMOVE AFTER FIXING)
 Route::get('/debug-ticket-email', function () {
     $results = [];

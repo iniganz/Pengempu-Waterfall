@@ -1,9 +1,19 @@
 @php
-    $waveClass = $attributes->get('class') ?? \App\Helpers\PageHelper::getWaveClass();
+    $waveClass = \App\Helpers\PageHelper::getWaveClass();
+
+    // Map wave class to background color
+    $bgColors = [
+        'w-home' => '#FFF1CA',
+        'w-second' => '#FFF1CA',
+        'w-third' => '#F4F6F5',
+        'w-default' => '#ffffff',
+    ];
+
+    $bgColor = $bgColors[$waveClass] ?? '#ffffff';
 @endphp
 
-<svg class="waves-footer {{ $waveClass }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
-    style="width: 100%; height: auto; display: block;">
+<svg class="waves-footer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
+    style="width: 100%; height: auto; display: block; background-color: {{ $bgColor }};">
     <defs>
         <linearGradient id="footerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" style="stop-color:#14532d;stop-opacity:1" />

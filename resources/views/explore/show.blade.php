@@ -7,9 +7,29 @@
         ← Kembali
     </a>
 
+    @php
+        // Helper function to get place image
+        $getPlaceImage = function($place) {
+            // Priority 1: base64 image_data
+            if (!empty($place->image_data) && str_starts_with($place->image_data, 'data:image')) {
+                return $place->image_data;
+            }
+            // Priority 2: Full URL
+            if (filter_var($place->image, FILTER_VALIDATE_URL)) {
+                return $place->image;
+            }
+            // Priority 3: Storage path (may not work on Railway)
+            if ($place->image) {
+                return asset('storage/' . $place->image);
+            }
+            // Fallback: placeholder
+            return 'https://via.placeholder.com/600x400?text=No+Image';
+        };
+    @endphp
+
     <div class="row g-4">
         <div class="col-lg-7">
-            <img src="{{ asset('storage/'.$place->image) }}"
+            <img src="{{ $getPlaceImage($place) }}"
                  class="img-fluid rounded shadow">
         </div>
 

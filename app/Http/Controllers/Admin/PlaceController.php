@@ -41,16 +41,19 @@ class PlaceController extends Controller
             'lat'         => 'required|numeric',
             'lng'         => 'required|numeric',
             'map_embed'   => 'nullable',
-            'image'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
         ]);
 
         $data = $request->all();
         $data['slug'] = $this->generateUniqueSlug($request->name);
 
-        // Upload image
+        // Upload image as base64 to database (Railway ephemeral filesystem workaround)
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')
-                ->store('places', 'public');
+            $file = $request->file('image');
+            $mimeType = $file->getMimeType();
+            $base64Image = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
+            $data['image'] = 'database'; // Marker
+            $data['image_data'] = $base64Image;
         }
 
         Place::create($data);
@@ -82,20 +85,19 @@ class PlaceController extends Controller
             'lat'         => 'required|numeric',
             'lng'         => 'required|numeric',
             'map_embed'   => 'nullable',
-            'image'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
         ]);
 
         $data = $request->all();
         $data['slug'] = $this->generateUniqueSlug($request->name);
 
-        // Ganti image lama
+        // Ganti image dengan base64 baru
         if ($request->hasFile('image')) {
-            if ($place->image && Storage::disk('public')->exists($place->image)) {
-                Storage::disk('public')->delete($place->image);
-            }
-
-            $data['image'] = $request->file('image')
-                ->store('places', 'public');
+            $file = $request->file('image');
+            $mimeType = $file->getMimeType();
+            $base64Image = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
+            $data['image'] = 'database'; // Marker
+            $data['image_data'] = $base64Image;
         }
 
         $place->update($data);
@@ -110,10 +112,6 @@ class PlaceController extends Controller
      */
     public function destroy(Place $place)
     {
-        if ($place->image && Storage::disk('public')->exists($place->image)) {
-            Storage::disk('public')->delete($place->image);
-        }
-
         $place->delete();
 
         return redirect()

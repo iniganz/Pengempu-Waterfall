@@ -68,6 +68,23 @@ Route::get('/debug-product-images', function () {
     return response()->json($result, 200, [], JSON_PRETTY_PRINT);
 });
 
+// Debug places data
+Route::get('/debug-places', function () {
+    $places = \App\Models\Place::all();
+    $result = [];
+    foreach ($places as $place) {
+        $result[] = [
+            'id' => $place->id,
+            'name' => $place->name,
+            'image' => $place->image,
+            'image_data_exists' => !empty($place->image_data),
+            'image_data_length' => $place->image_data ? strlen($place->image_data) : 0,
+            'image_data_starts_with' => $place->image_data ? substr($place->image_data, 0, 50) : null,
+        ];
+    }
+    return response()->json($result, 200, [], JSON_PRETTY_PRINT);
+});
+
 // Debug gallery posts data
 Route::get('/debug-gallery-posts', function () {
     $posts = \App\Models\GalleryPost::latest()->take(10)->get();

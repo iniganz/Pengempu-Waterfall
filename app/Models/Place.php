@@ -16,6 +16,7 @@ class Place extends Model
         'lat',
         'lng',
         'map_embed',
-        'image'
+        'image',
+        'image_data'
     ];
 }

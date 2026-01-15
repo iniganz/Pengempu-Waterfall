@@ -7,6 +7,30 @@
             <p class="cuypy text-center">Explore Sekitar</p>
         </div><!-- End Section Title -->
 
+    @php
+        // Helper function to get place image
+        $getPlaceImage = function($place) {
+            // Priority 1: base64 image_data
+            if (!empty($place->image_data) && str_starts_with($place->image_data, 'data:image')) {
+                return $place->image_data;
+            }
+            // Priority 2: Full URL
+            if (filter_var($place->image, FILTER_VALIDATE_URL)) {
+                return $place->image;
+            }
+            // Priority 3: Public images folder
+            if ($place->image && file_exists(public_path('images/' . $place->image))) {
+                return asset('images/' . $place->image);
+            }
+            // Priority 4: Storage path (may not work on Railway)
+            if ($place->image) {
+                return asset('storage/' . $place->image);
+            }
+            // Fallback: placeholder
+            return 'https://via.placeholder.com/400x200?text=No+Image';
+        };
+    @endphp
+
     <div class="row g-4">
         @foreach ($places as $place)
         <div class="col-md-6 col-lg-4">
@@ -14,7 +38,7 @@
                  data-lat="{{ $place->lat }}"
                  data-lng="{{ $place->lng }}">
 
-                <img src="{{ asset('storage/'.$place->image) }}"
+                <img src="{{ $getPlaceImage($place) }}"
                      class="card-img-top"
                      style="height:200px; object-fit:cover;">
 

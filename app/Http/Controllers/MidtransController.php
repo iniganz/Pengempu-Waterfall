@@ -98,15 +98,26 @@ class MidtransController extends Controller
                             'ticket' => $ticket,
                         ])->render();
 
+                        // Resend free tier: kirim ke admin, lalu forward ke customer
+                        $adminEmail = 'pengempuw@gmail.com';
+                        $customerEmail = (string) $order->email;
+
+                        $forwardInfo = '<div style="background:#fff3cd;padding:15px;margin-bottom:20px;border:1px solid #ffc107;border-radius:5px;">';
+                        $forwardInfo .= '<strong>⚠️ FORWARD EMAIL INI KE CUSTOMER:</strong><br>';
+                        $forwardInfo .= 'Email Customer: <strong>' . $customerEmail . '</strong><br>';
+                        $forwardInfo .= 'Order ID: ' . $order->order_id . '<br>';
+                        $forwardInfo .= '<small>(Hapus kotak kuning ini sebelum forward)</small>';
+                        $forwardInfo .= '</div>';
+
                         Log::info('MidtransController: View rendered, calling ResendMailer');
 
                         ResendMailer::send(
                             from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
-                            to: $order->email,
-                            subject: 'Tiket Anda - Pengempu Waterfall',
-                            html: $html
+                            to: $adminEmail,
+                            subject: '[FORWARD KE: ' . $customerEmail . '] Tiket - ' . $order->order_id,
+                            html: $forwardInfo . $html
                         );
-                        Log::info('Ticket email sent via Resend', ['to' => $order->email, 'order_id' => $order->order_id]);
+                        Log::info('Ticket email sent via Resend to admin for forwarding', ['admin' => $adminEmail, 'customer' => $customerEmail, 'order_id' => $order->order_id]);
                     } elseif ($useSmtp) {
                         Log::info('MidtransController: Using SMTP mailer');
                         Mail::to($order->email)->send(new TicketMail($order, $ticket));

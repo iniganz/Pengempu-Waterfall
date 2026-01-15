@@ -135,21 +135,33 @@ class OrderAdminController extends Controller
 
                 Log::info('View rendered, calling ResendMailer::send()');
 
-                // Kirim langsung ke email customer
-                $recipientEmail = (string) $order->email;
+                // Resend free tier: kirim ke pengempuw@gmail.com, lalu forward manual ke customer
+                $adminEmail = 'pengempuw@gmail.com';
+                $customerEmail = (string) $order->email;
 
-                Log::info('Sending ticket to customer email', [
-                    'recipient' => $recipientEmail,
+                // Tambahkan info customer di awal HTML untuk memudahkan forward
+                $forwardInfo = '<div style="background:#fff3cd;padding:15px;margin-bottom:20px;border:1px solid #ffc107;border-radius:5px;">';
+                $forwardInfo .= '<strong>⚠️ FORWARD EMAIL INI KE CUSTOMER:</strong><br>';
+                $forwardInfo .= 'Email Customer: <strong>' . $customerEmail . '</strong><br>';
+                $forwardInfo .= 'Order ID: ' . $order->order_id . '<br>';
+                $forwardInfo .= '<small>(Hapus kotak kuning ini sebelum forward)</small>';
+                $forwardInfo .= '</div>';
+
+                $htmlWithForwardInfo = $forwardInfo . $html;
+
+                Log::info('Sending ticket to admin email for forwarding', [
+                    'admin_email' => $adminEmail,
+                    'customer_email' => $customerEmail,
                 ]);
 
                 $res = ResendMailer::send(
                     from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), (string) config('mail.from.address', 'onboarding@resend.dev')),
-                    to: $recipientEmail,
-                    subject: 'Tiket Resmi - ' . $order->order_id,
-                    html: $html
+                    to: $adminEmail,
+                    subject: '[FORWARD KE: ' . $customerEmail . '] Tiket Resmi - ' . $order->order_id,
+                    html: $htmlWithForwardInfo
                 );
 
-                Log::info('Admin resend ticket via Resend', ['order_id' => $order->order_id, 'to' => $recipientEmail]);
+                Log::info('Admin resend ticket via Resend', ['order_id' => $order->order_id, 'admin_email' => $adminEmail, 'customer_email' => $customerEmail]);
                 $resendId = $res['id'] ?? null;
             } else {
                 Log::info('INSIDE Laravel mailer branch (fallback)');

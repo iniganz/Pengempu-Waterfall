@@ -12,7 +12,7 @@
             <div class="product-section">
                 @if ($product->images && $product->images->count() > 0)
                     @php
-                        // Helper: determine image path (check if starts with 'images/' for public/images, else use storage)
+                        // Helper: determine image path
                         $getImageUrl = function($imagePath) {
                             // Check if it's a full URL (http/https)
                             if (filter_var($imagePath, FILTER_VALIDATE_URL)) {
@@ -21,6 +21,10 @@
                             // Check if it starts with 'images/' (public folder)
                             if (strpos($imagePath, 'images/') === 0) {
                                 return asset($imagePath);
+                            }
+                            // Check if file exists in public/images (without prefix)
+                            if (file_exists(public_path('images/' . $imagePath))) {
+                                return asset('images/' . $imagePath);
                             }
                             // Otherwise use storage path
                             return asset('storage/' . $imagePath);

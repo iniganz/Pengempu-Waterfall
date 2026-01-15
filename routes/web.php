@@ -41,6 +41,33 @@ Route::get('/clear-all-cache', function () {
     return 'All caches cleared: cache, config, view, route';
 });
 
+// Run migrations (temp route for Railway)
+Route::get('/run-migrations', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migrations completed: ' . Artisan::output();
+    } catch (\Exception $e) {
+        return 'Migration error: ' . $e->getMessage();
+    }
+});
+
+// Debug product images data
+Route::get('/debug-product-images', function () {
+    $images = \App\Models\ProductImage::with('product')->get();
+    $result = [];
+    foreach ($images as $img) {
+        $result[] = [
+            'id' => $img->id,
+            'product' => $img->product->title ?? 'N/A',
+            'image_url' => $img->image_url,
+            'image_data_exists' => !empty($img->image_data),
+            'image_data_length' => $img->image_data ? strlen($img->image_data) : 0,
+            'image_data_starts_with' => $img->image_data ? substr($img->image_data, 0, 50) : null,
+        ];
+    }
+    return response()->json($result, 200, [], JSON_PRETTY_PRINT);
+});
+
 // Debug gallery posts data
 Route::get('/debug-gallery-posts', function () {
     $posts = \App\Models\GalleryPost::latest()->take(10)->get();

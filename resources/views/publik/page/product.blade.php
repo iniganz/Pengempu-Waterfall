@@ -12,21 +12,26 @@
             <div class="product-section">
                 @if ($product->images && $product->images->count() > 0)
                     @php
-                        // Helper: determine image path
-                        $getImageUrl = function($imagePath) {
-                            // Check if it's a full URL (http/https)
+                        // Helper: determine image path (supports base64, URL, and storage)
+                        $getImageUrl = function($image) {
+                            // Priority 1: base64 image_data
+                            if (!empty($image->image_data) && str_starts_with($image->image_data, 'data:image')) {
+                                return $image->image_data;
+                            }
+                            $imagePath = $image->image_url;
+                            // Priority 2: Full URL (http/https)
                             if (filter_var($imagePath, FILTER_VALIDATE_URL)) {
                                 return $imagePath;
                             }
-                            // Check if it starts with 'images/' (public folder)
+                            // Priority 3: Check if it starts with 'images/' (public folder)
                             if (strpos($imagePath, 'images/') === 0) {
                                 return asset($imagePath);
                             }
-                            // Check if file exists in public/images (without prefix)
+                            // Priority 4: Check if file exists in public/images (without prefix)
                             if (file_exists(public_path('images/' . $imagePath))) {
                                 return asset('images/' . $imagePath);
                             }
-                            // Otherwise use storage path
+                            // Priority 5: Otherwise use storage path (may not work on Railway)
                             return asset('storage/' . $imagePath);
                         };
                     @endphp
@@ -34,7 +39,7 @@
                         <!-- Main Image Column -->
                         <div>
                             <div class="main-image-container">
-                                <img id="mainImage" src="{{ $getImageUrl($product->images[0]->image_url) }}"
+                                <img id="mainImage" src="{{ $getImageUrl($product->images[0]) }}"
                                     alt="{{ $product->title }}" class="main-image">
                             </div>
                         </div>
@@ -44,8 +49,8 @@
                             <div class="thumbnails-container">
                                 @forelse($product->images as $index => $image)
                                     <div class="thumb {{ $index === 0 ? 'active' : '' }}"
-                                        data-image="{{ $getImageUrl($image->image_url) }}">
-                                        <img src="{{ $getImageUrl($image->image_url) }}"
+                                        data-image="{{ $getImageUrl($image) }}">
+                                        <img src="{{ $getImageUrl($image) }}"
                                             alt="Thumbnail {{ $index + 1 }}" loading="lazy">
                                     </div>
                                 @empty

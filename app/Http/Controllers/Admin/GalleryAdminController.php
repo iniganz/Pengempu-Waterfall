@@ -45,32 +45,21 @@ class GalleryAdminController extends Controller
 
             DB::beginTransaction();
 
-            // Store image
+            // Store image as base64 in database (Railway ephemeral filesystem workaround)
             try {
-                // Upload ke Cloudinary jika dikonfigurasi
-                if (env('CLOUDINARY_URL') || env('CLOUDINARY_CLOUD_NAME')) {
-                    Log::info('Uploading product image to Cloudinary...');
+                $file = $request->file('image');
+                $mimeType = $file->getMimeType();
+                $base64Image = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
 
-                    $uploadedFile = Cloudinary::upload($request->file('image')->getRealPath(), [
-                        'folder' => 'pengempu-products',
-                        'transformation' => [
-                            'quality' => 'auto',
-                            'fetch_format' => 'auto',
-                        ]
-                    ]);
-
-                    $path = $uploadedFile->getSecurePath(); // Full HTTPS URL
-                    Log::info('Cloudinary upload success: ' . $path);
-                } else {
-                    // Fallback ke local storage
-                    $path = $request->file('image')->store('products', 'public');
-                    Log::info('File stored locally at: ' . $path);
-                }
+                Log::info('Storing product image as base64, size: ' . strlen($base64Image) . ' bytes');
 
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_url' => $path,
+                    'image_url' => 'database', // Marker that image is stored in database
+                    'image_data' => $base64Image,
                 ]);
+
+                Log::info('Product image saved to database successfully');
             } catch (\Exception $e) {
                 Log::error('Image upload failed: ' . $e->getMessage());
                 throw new \Exception('Failed to upload image: ' . $e->getMessage());
@@ -113,10 +102,16 @@ class GalleryAdminController extends Controller
             $main = $images->first();
             // @phpstan-ignore-next-line - Model properties from Eloquent
             if ($main->id !== $productImage->id) {
-                // Swap image_url
-                $tmp = $main->image_url;
+                // Swap both image_url and image_data
+                $tmpUrl = $main->image_url;
+                $tmpData = $main->image_data;
+
                 $main->image_url = $productImage->image_url;
-                $productImage->image_url = $tmp;
+                $main->image_data = $productImage->image_data;
+
+                $productImage->image_url = $tmpUrl;
+                $productImage->image_data = $tmpData;
+
                 $main->save();
                 $productImage->save();
             }

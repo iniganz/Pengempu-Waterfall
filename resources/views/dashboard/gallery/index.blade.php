@@ -71,12 +71,32 @@
                         {{ __('Current Gallery') }} ({{ $product->images->count() }} {{ __('images') }})
                     </h3>
 
+                    @php
+                        // Helper function to get image URL
+                        $getImageSrc = function($image) {
+                            // Priority 1: base64 image_data
+                            if (!empty($image->image_data) && str_starts_with($image->image_data, 'data:image')) {
+                                return $image->image_data;
+                            }
+                            // Priority 2: Full URL (http/https)
+                            if (filter_var($image->image_url, FILTER_VALIDATE_URL)) {
+                                return $image->image_url;
+                            }
+                            // Priority 3: Public images folder
+                            if (strpos($image->image_url, 'images/') === 0) {
+                                return asset($image->image_url);
+                            }
+                            // Priority 4: Storage path (may not work on Railway)
+                            return asset('storage/' . $image->image_url);
+                        };
+                    @endphp
+
                     @if ($product->images->isNotEmpty())
                         <!-- Desktop View: Grid -->
                         <div class="hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
                             @foreach ($product->images as $index => $image)
                                 <div class="group relative aspect-square overflow-hidden rounded-lg bg-gray-200">
-                                    <img src="{{ asset('storage/' . $image->image_url) }}"
+                                    <img src="{{ $getImageSrc($image) }}"
                                         alt="Image {{ $index + 1 }}" class="h-full w-full object-cover">
 
                                     <!-- Overlay on hover -->
@@ -127,7 +147,7 @@
                                 @foreach ($product->images as $index => $image)
                                     <div class="group relative flex-shrink-0 overflow-hidden rounded-lg bg-gray-200"
                                         style="width: 200px; height: 200px;">
-                                        <img src="{{ asset('storage/' . $image->image_url) }}"
+                                        <img src="{{ $getImageSrc($image) }}"
                                             alt="Image {{ $index + 1 }}" class="h-full w-full object-cover">
 
                                         <!-- Overlay on tap/hover -->

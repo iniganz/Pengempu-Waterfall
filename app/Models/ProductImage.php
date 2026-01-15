@@ -13,7 +13,7 @@ class ProductImage extends Model
     use HasFactory;
     protected $table = 'product_images';
     public $timestamps = true;
-    protected $fillable = ['product_id', 'image_url'];
+    protected $fillable = ['product_id', 'image_url', 'image_data'];
 
     public function product()
     {

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\GalleryPost;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class GalleryPostController extends Controller
 {
@@ -33,10 +34,25 @@ class GalleryPostController extends Controller
 
             Log::info('Validation passed');
 
-            // Simpan file
-            $path = $request->file('image')->store('gallery_posts', 'public');
+            // Upload ke Cloudinary jika dikonfigurasi, otherwise local storage
+            if (env('CLOUDINARY_URL') || env('CLOUDINARY_CLOUD_NAME')) {
+                Log::info('Uploading to Cloudinary...');
 
-            Log::info('File stored at: ' . $path);
+                $uploadedFile = Cloudinary::upload($request->file('image')->getRealPath(), [
+                    'folder' => 'pengempu-gallery',
+                    'transformation' => [
+                        'quality' => 'auto',
+                        'fetch_format' => 'auto',
+                    ]
+                ]);
+
+                $path = $uploadedFile->getSecurePath(); // Full HTTPS URL
+                Log::info('Cloudinary upload success: ' . $path);
+            } else {
+                // Fallback ke local storage
+                $path = $request->file('image')->store('gallery_posts', 'public');
+                Log::info('File stored locally at: ' . $path);
+            }
 
             // Simpan ke database
             $post = GalleryPost::create([

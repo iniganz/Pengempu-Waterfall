@@ -62,13 +62,19 @@
                 </form>
                 <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
                     @forelse($galleryPosts as $post)
+                        @php
+                            // Handle both Cloudinary URLs (https://...) and local storage paths
+                            $imageUrl = filter_var($post->image_path, FILTER_VALIDATE_URL)
+                                ? $post->image_path
+                                : asset('storage/' . $post->image_path);
+                        @endphp
                         <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-gallery">
-                            <img src="{{ asset('storage/' . $post->image_path) }}" class="img-fluid"
+                            <img src="{{ $imageUrl }}" class="img-fluid"
                                 alt="{{ $post->caption ?? $post->name }}">
                             <div class="portfolio-info">
                                 <h4>{{ $post->name }}</h4>
                                 <p>{{ $post->caption }}</p>
-                                <a href="{{ asset('storage/' . $post->image_path) }}"
+                                <a href="{{ $imageUrl }}"
                                     title="{{ $post->caption ?? $post->name }}" data-gallery="portfolio-gallery-app"
                                     class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
                             </div>

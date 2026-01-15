@@ -32,19 +32,6 @@ if (app()->environment('local')) {
     });
 }
 
-// Temporary migration route - DELETE AFTER USE
-Route::get('/run-migrate-pengempu2026', function () {
-    if (Schema::hasColumn('gallery_posts', 'image_data')) {
-        return 'Column image_data already exists. No migration needed.';
-    }
-    try {
-        Artisan::call('migrate', ['--force' => true]);
-        return '<pre>Migration SUCCESS!<br>' . Artisan::output() . '</pre>';
-    } catch (\Exception $e) {
-        return 'Migration failed: ' . $e->getMessage();
-    }
-});
-
 // Email diagnostic route (PRODUCTION DEBUG - REMOVE AFTER FIXING)
 Route::get('/debug-ticket-email', function () {
     $results = [];

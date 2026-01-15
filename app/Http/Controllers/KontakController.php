@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use App\Services\ResendMailer;
+use App\Services\BrevoMailer;
 
 class KontakController extends Controller
 {
@@ -32,22 +33,33 @@ class KontakController extends Controller
         ]);
 
         try {
-            $adminEmail = (string) config('mail.from.address', 'pengempuw@gmail.com');
+            $adminEmail = 'pengempuw@gmail.com';
+            $mailMailer = env('MAIL_MAILER');
 
-            // Railway often can't reach Gmail SMTP reliably; prefer Resend API when configured.
-            if (env('MAIL_MAILER') === 'resend' || env('RESEND_API_KEY')) {
+            // Use Brevo API (preferred - 300 emails/day free)
+            if ($mailMailer === 'brevo' && env('BREVO_API_KEY')) {
                 $html = View::make('emails.contact', ['data' => $data])->render();
-                ResendMailer::send(
-                    from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), $adminEmail),
-                    to: 'pengempuw@gmail.com',
+                BrevoMailer::send(
+                    from: sprintf('%s <%s>', $data['name'], $adminEmail),
+                    to: $adminEmail,
                     subject: !empty($data['subject']) ? (string) $data['subject'] : 'Pesan dari Contact Form',
                     html: $html
                 );
-
+                Log::info('Contact email sent via Brevo from: ' . $data['email']);
+            }
+            // Fallback to Resend API
+            elseif ($mailMailer === 'resend' || env('RESEND_API_KEY')) {
+                $html = View::make('emails.contact', ['data' => $data])->render();
+                ResendMailer::send(
+                    from: sprintf('%s <%s>', (string) config('mail.from.name', 'Admin'), $adminEmail),
+                    to: $adminEmail,
+                    subject: !empty($data['subject']) ? (string) $data['subject'] : 'Pesan dari Contact Form',
+                    html: $html
+                );
                 Log::info('Contact email sent via Resend from: ' . $data['email']);
             } else {
                 // Fallback to Laravel Mail (SMTP/log depending on MAIL_MAILER)
-                Mail::to('pengempuw@gmail.com')->send(new SendMail($data));
+                Mail::to($adminEmail)->send(new SendMail($data));
                 Log::info('Contact email dispatched via Laravel mailer from: ' . $data['email']);
             }
 

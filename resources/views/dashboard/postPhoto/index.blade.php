@@ -49,7 +49,16 @@
                                 <td>{{ $post->created_at->format('d-m-Y H:i') }}</td>
                                 <td class="flex flex-wrap gap-2 py-2 justify-center">
                                     {{-- View Full Image --}}
-                                    <button type="button" onclick="window.open('{{ asset('storage/' . $post->image_path) }}', '_blank')" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</button>
+                                    @php
+                                        if ($post->image_data) {
+                                            $viewUrl = $post->image_data;
+                                        } elseif (filter_var($post->image_path, FILTER_VALIDATE_URL)) {
+                                            $viewUrl = $post->image_path;
+                                        } else {
+                                            $viewUrl = asset('storage/' . $post->image_path);
+                                        }
+                                    @endphp
+                                    <a href="{{ $viewUrl }}" target="_blank" class="rounded bg-blue-600 px-3 py-1 text-xs text-white">View</a>
                                     {{-- Approve --}}
                                     @if($post->status == 'pending')
                                     <form method="POST" action="{{ route('dashboard.post.approve', $post->id) }}">
